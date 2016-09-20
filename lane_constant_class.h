@@ -16,6 +16,8 @@ class LaneConstant
 		void SetPrevious();
 		std::string variablename_;
 		double value_;
+		bool hitlimit_;
+		int reversedcount_;
 
 	protected:
 
