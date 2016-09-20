@@ -120,7 +120,7 @@ void ResultValues::SetPreviousScore()
 void ResultValues::Update(uint32_t totalframes)
 {
 	polygondev_ = Average(polygondevqueue_);
-	score_= 20000.0 + (20000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	score_= 20000.0 + (30000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
 	if ( score_ >= previousscore_ ) {
 		improved_ = hasimproved_ = true;
 	} else {
