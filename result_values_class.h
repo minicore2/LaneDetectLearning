@@ -9,11 +9,12 @@ class ResultValues
 {
 	public:
 		ResultValues();
-		virtual ~ResultValues();
 		void NewPattern();
-		void Update(Polygon polygon);
-		double Score();
-		bool BestReached();
+		void Push(Polygon polygon);
+		void Update();
+		double score_;
+		bool bestpassed_;
+		bool improved_;
 
 	protected:
 

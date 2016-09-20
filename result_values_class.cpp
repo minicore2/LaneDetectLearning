@@ -10,26 +10,18 @@ ResultValues::ResultValues()
 
 void ResultValues::NewPattern()
 {
-	
+	return;
 }
 
-void ResultValues::Update(Polygon polygon)
+void ResultValues::Push(Polygon polygon)
 {
-	
+	return;
 }
 
-double ResultValues::Score()
+void ResultValues::Update()
 {
-	return 0.0;
-}
-
-bool ResultValues::BestReached()
-{
-	return false;
-}
-
-
-ResultValues::~ResultValues()
-{
-	
+	score_= 0.0;
+	bestpassed_ = true;
+	improved_ = false;
+	return;
 }
