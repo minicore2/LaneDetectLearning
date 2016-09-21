@@ -82,7 +82,8 @@ ResultValues::ResultValues(  ):
 							polygondev_{0.0},
 							bestpassed_{false},
 							improved_{false},
-							hasimproved_{false}
+							hasimproved_{false},
+							firstpass_{true}
 {
 	
 }
@@ -97,11 +98,26 @@ void ResultValues::NewPattern()
 void ResultValues::NewIteration()
 {
 	NewPattern();
+	previousscore_ = score_;
 	detectedframes_ = 0;
-	samescore_ = 0;
-	bestpassed_ = false;
 	previousscore_ = score_;
 	polygondevqueue_.clear();
+	
+	return;
+}
+
+void ResultValues::SetPrevious()
+{
+	score_ = previousscore_;
+}
+
+void ResultValues::NewVariable()
+{
+	NewIteration();
+	samescore_ = 0;
+	bestpassed_ = false;
+	hasimproved_ = false;
+	firstpass_ = true;
 	
 	return;
 }
@@ -119,21 +135,19 @@ void ResultValues::Push(Polygon polygon)
 	return;
 }
 
-void ResultValues::SetPreviousScore()
-{
-	hasimproved_ = false;
-	score_ = previousscore_;
-	
-	return;
-}
-
 void ResultValues::Update(uint32_t totalframes)
 {
 	polygondev_ = Average(polygondevqueue_);
-	score_= 20000.0 + (30000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	score_= 20000.0 + (35000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	std::cout << "Prev score:" << previousscore_ << ", score: " << score_ << std::endl;
 	if ( score_ == previousscore_ ) samescore_++;
 	if ( (score_ >= previousscore_) && (samescore_ < 3) ) {
-		improved_ = hasimproved_ = true;
+		if ( firstpass_ ) {
+			improved_ = true;
+			firstpass_ = false;
+		} else {
+			improved_ = hasimproved_ = true;
+		}
 	} else {
 		improved_ = false;
 		samescore_ = 0;

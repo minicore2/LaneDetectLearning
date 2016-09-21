@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include "lane_constant_class.h"
 
@@ -13,7 +14,8 @@ LaneConstant::LaneConstant( std::string variablename,
 							maxvalue_{ maxvalue },
 							increment_{ increment },
 							direction_{1.0},
-							reversedcount_{0}
+							reversedcount_{0},
+							hitlimit_{false}
 {
 	range_ = maxvalue - minvalue;
 }
@@ -30,6 +32,7 @@ void LaneConstant::Modify()
 		hitlimit_ = true;
 		value_ = maxvalue_;
 	}
+	std::cout << "Modify called, old: " << previousvalue_ << ", new: " << value_ << std::endl;
 	return;
 }
 

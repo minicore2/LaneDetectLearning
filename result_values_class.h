@@ -12,8 +12,9 @@ class ResultValues
 		void NewPattern();
 		void Push(Polygon polygon);
 		void Update(uint32_t totalframes);
-		void SetPreviousScore();
 		void NewIteration();
+		void NewVariable();
+		void SetPrevious();
 		bool bestpassed_;
 		bool improved_;
 		bool hasimproved_;
@@ -28,6 +29,7 @@ class ResultValues
 		int samescore_;
 		std::deque<Polygon> polygonqueue_;
 		std::deque<double> polygondevqueue_;
+		bool firstpass_;
 };
 
 #endif // RESULTVALUES_H
