@@ -69,7 +69,8 @@ double StandardDeviation( std::deque<Polygon> &polygons )
 	y2 /= polygons.size();
 	x3 /= polygons.size();
 	y3 /= polygons.size();
-	double sum{ x0 + y0 + x1 + y2 + x2 + y2 + x3 + y3 };
+	//Commented out upper points, lower are most critical!
+	double sum{ x0 + y0 + x1 + y1 };// + x2 + y2 + x3 + y3 };
 	
 	return sum;
 }
@@ -138,7 +139,7 @@ void ResultValues::Push(Polygon polygon)
 void ResultValues::Update(uint32_t totalframes)
 {
 	polygondev_ = Average(polygondevqueue_);
-	score_= 20000.0 + (35000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	score_= 20000.0 + (15000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
 	std::cout << "Prev score:" << previousscore_ << ", score: " << score_ << std::endl;
 	if ( score_ == previousscore_ ) samescore_++;
 	if ( (score_ >= previousscore_) && (samescore_ < 3) ) {

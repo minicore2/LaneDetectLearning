@@ -42,73 +42,6 @@
 //Forward declations
 void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants);
 
-namespace lanedetectconstants {
-
-	//Processing methods to perform
-	bool enableblobcontour{false};
-	bool enablesegmentblobcontour{false};
-	
-	//Blob detection parameters
-	cv::SimpleBlobDetector::Params klanedetectblobparams() {
-        cv::SimpleBlobDetector::Params params;
-        params.thresholdStep = 5;
-        params.minThreshold = 60;
-        params.maxThreshold = 255;
-        params.minRepeatability = 10;
-        params.minDistBetweenBlobs = 10;
-        params.filterByColor = true;
-        params.blobColor = 255;
-        params.filterByArea = true;
-        params.minArea = 2.0f;
-        params.maxArea = 200.0f;
-        params.filterByCircularity = false;
-        params.minCircularity = 0.9f;
-        params.maxCircularity = 1.0f;
-        params.filterByInertia = false;
-        params.minInertiaRatio = 0.1f;
-        params.maxInertiaRatio = 1.0f;
-        params.filterByConvexity = true;
-        params.minConvexity = 0.7f;
-        params.maxConvexity = 1.0f;
-        return params;
-	}
-	
-	//Segment filters
-	//uint16_t ksegmentlength{10};
-	uint16_t ksegmentellipseheight{5};
-	float ksegmentanglewindow{80.0f};
-	float ksegmentlengthwidthratio{1.5f};
-	
-	//Construct from blob filters
-	float kblobslopewindow{0.10f};
-	
-	//Construct from segment and blob filters
-	float ksegmentblobanglewindow{20.0f};
-	
-	//Construct from segments filters
-	float ksegmentsanglewindow{45.0f};
-	
-	//Final contour filters
-	//uint16_t klength{100};
-	uint16_t kellipseheight{60};
-	float kanglewindow{80.0f};
-	float klengthwidthratio{7.0f};
-	
-	//Scoring variables
-    double kcommonanglewindow = 45.0;
-    uint16_t kminroadwidth = 200.0;
-    uint16_t kmaxroadwidth = 700.0;
-	uint16_t koptimumwidth = 400;
-	//weighting for best grade
-	double klengthweight = 5.0;
-	double kangleweight = -5.0;
-	double kcenteredweight = -2.5;
-	double kwidthweight = 1.0;		//-1.0;
-	double klowestpointweight = 1.0;	//-0.25;	//Should be higher but I have bad test videos
-	double klowestscorelimit = -DBL_MAX;
-	
-}
-
 int main(int argc,char *argv[])
 {
 	//Check arguments passed
@@ -141,50 +74,43 @@ int main(int argc,char *argv[])
 	std::cout << (argc - 1) << " files to evaluate with " << totalframes <<
 		" total frames" << std::endl;
 	//Set how often to message console
-	uint32_t messagecount{totalframes/100};	//Every 0.1%
+	uint32_t messagecount{totalframes/100};	//Every 1%
 
-	//Create variable classes -> Evaluated in order that they're pushed in!!!
+	//Create variable classes
 	std::vector<LaneConstant> laneconstants;
-	//Weights
-	laneconstants.push_back( LaneConstant( "klowestpointweight",
-		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "kwidthweight",
-		lanedetectconstants::kwidthweight, 0.0, 10.0, -0.03) );
-	laneconstants.push_back( LaneConstant( "kcenteredweight",
-		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "kangleweight",
-		lanedetectconstants::kangleweight, -10.0, 0.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "klengthweight",
-		lanedetectconstants::klengthweight, 0.0, 10.0, 0.03) );
-	//Pair filters
-	laneconstants.push_back( LaneConstant( "koptimumwidth",
-		lanedetectconstants::koptimumwidth, 100, 1200, 0.03) );
-	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.03) );
-	laneconstants.push_back( LaneConstant( "kminroadwidth",
-		lanedetectconstants::kminroadwidth, 100, 400, 0.03) );
-	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
-		lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.03) );
-	//Final contour filters
-	laneconstants.push_back( LaneConstant( "klengthwidthratio",
-		lanedetectconstants::klengthwidthratio, 2.0, 100.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "kanglewindow",
-		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "kellipseheight",
-		lanedetectconstants::kellipseheight, 20.0, 120.0, 0.03) );
-	//Construct from segments filters
-	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
-		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.03) );
-	//Skip blobs
-	//Segment filters
-	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
+		lanedetectconstants::ksegmentanglewindow, 0.0, 180.0, 0.01) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 10.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
-		lanedetectconstants::ksegmentanglewindow, 0.0, 1800.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
+		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
+		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.01) );
+	laneconstants.push_back( LaneConstant( "kellipseheight",
+		lanedetectconstants::kellipseheight, 20.0, 120.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "kanglewindow",
+		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.01) );
+	laneconstants.push_back( LaneConstant( "klengthwidthratio",
+		lanedetectconstants::klengthwidthratio, 2.0, 100.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
+		lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.01) );
+	laneconstants.push_back( LaneConstant( "kminroadwidth",
+		lanedetectconstants::kminroadwidth, 100, 400, 0.03) );
+	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
+		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.03) );
+	laneconstants.push_back( LaneConstant( "koptimumwidth",
+		lanedetectconstants::koptimumwidth, 100, 1200, 0.03) );
+	laneconstants.push_back( LaneConstant( "klengthweight",
+		lanedetectconstants::klengthweight, 0.0, 10.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "kangleweight",
+		lanedetectconstants::kangleweight, -10.0, 0.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "kcenteredweight",
+		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.03) );
+	laneconstants.push_back( LaneConstant( "kwidthweight",
+		lanedetectconstants::kwidthweight, 0.0, 10.0, -0.03) );
+	laneconstants.push_back( LaneConstant( "klowestpointweight",
+		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.03) );
 	
-	//
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
@@ -259,10 +185,8 @@ int main(int argc,char *argv[])
 				first = false;
 			} else if ( resultvalues.bestpassed_  || (laneconstants[i].reversedcount_ > 1)) {
 				laneconstants[i].SetPrevious();
-				std::cout << "Best passed, next variable" << std::endl;
 				break;
 			} else if ( laneconstants[i].hitlimit_ && resultvalues.improved_ ) {
-				std::cout << "Hit limit, next variable" << std::endl;
 				break;
 			} else if ( resultvalues.improved_ ) {
 				//Do nothing

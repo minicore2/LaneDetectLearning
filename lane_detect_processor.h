@@ -28,11 +28,6 @@ void CreateKeypoints( const std::vector<Contour>& contours,
 void EvaluateSegment( const Contour& contour,
 					  const int imageheight,
 	                  std::vector<EvaluatedContour>&	evaluatedsegments );
-void ConstructFromBlobs( const std::vector<cv::KeyPoint>& keypoints,
-	                     std::vector<Contour>& constructedcontours );
-void ConstructFromSegmentAndBlob( const std::vector<EvaluatedContour>& evaluatedsegments,
-	                              const std::vector<cv::KeyPoint>& keypoints,
-								  std::vector<Contour>&	constructedcontours );
 void ConstructFromSegments( const std::vector<EvaluatedContour>& evaluatedsegments,
                             std::vector<Contour>& constructedcontours );
 void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,

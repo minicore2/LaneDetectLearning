@@ -32,7 +32,6 @@ void LaneConstant::Modify()
 		hitlimit_ = true;
 		value_ = maxvalue_;
 	}
-	std::cout << "Modify called, old: " << previousvalue_ << ", new: " << value_ << std::endl;
 	return;
 }
 

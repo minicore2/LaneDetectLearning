@@ -2,23 +2,10 @@
 #define LANEDETECTCONSTANTS_H
 
 namespace lanedetectconstants {
-
-	//Processing methods to perform
-	extern bool enableblobcontour;
-	extern bool enablesegmentblobcontour;
-	
-	//Blob detection parameters
-	extern cv::SimpleBlobDetector::Params klanedetectblobparams();
 	
 	extern uint16_t ksegmentellipseheight;
 	extern float ksegmentanglewindow;
 	extern float ksegmentlengthwidthratio;
-	
-	//Construct from blob filters
-	extern float kblobslopewindow;
-	
-	//Construct from segment and blob filters
-	extern float ksegmentblobanglewindow;
 	
 	//Construct from segments filters
 	extern float ksegmentsanglewindow;
