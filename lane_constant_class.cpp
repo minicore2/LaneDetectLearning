@@ -16,8 +16,6 @@ LaneConstant::LaneConstant( std::string variablename,
 							reversedcount_{0}
 {
 	range_ = maxvalue - minvalue;
-	//Comment out if you don't want to start in middle of range_
-	value_ = (maxvalue - minvalue)/2;
 }
 
 void LaneConstant::Modify()

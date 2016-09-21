@@ -103,8 +103,8 @@ namespace lanedetectconstants {
 	double klengthweight = 5.0;
 	double kangleweight = -5.0;
 	double kcenteredweight = -2.5;
-	double kwidthweight = 0.0;		//-1.0;
-	double klowestpointweight = 0.0;	//-0.25;	//Should be higher but I have bad test videos
+	double kwidthweight = 1.0;		//-1.0;
+	double klowestpointweight = 1.0;	//-0.25;	//Should be higher but I have bad test videos
 	double klowestscorelimit = -DBL_MAX;
 	
 }
@@ -147,42 +147,42 @@ int main(int argc,char *argv[])
 	std::vector<LaneConstant> laneconstants;
 	//Weights
 	laneconstants.push_back( LaneConstant( "klowestpointweight",
-		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.02) );
+		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "kwidthweight",
-		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.02) );
+		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "kcenteredweight",
-		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.02) );
+		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "kangleweight",
-		lanedetectconstants::kangleweight, -10.0, 0.0, 0.02) );
+		lanedetectconstants::kangleweight, -10.0, 0.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "klengthweight",
-		lanedetectconstants::klengthweight, 0.0, 10.0, 0.02) );
+		lanedetectconstants::klengthweight, 0.0, 10.0, 0.05) );
 	//Pair filters
 	laneconstants.push_back( LaneConstant( "koptimumwidth",
-		lanedetectconstants::koptimumwidth, 100, 1200, 0.02) );
+		lanedetectconstants::koptimumwidth, 100, 1200, 0.05) );
 	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.02) );
+		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.05) );
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
-		lanedetectconstants::kminroadwidth, 100, 400, 0.02) );
+		lanedetectconstants::kminroadwidth, 100, 400, 0.05) );
 	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
-		lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.02) );
+		lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.05) );
 	//Final contour filters
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
-		lanedetectconstants::klengthwidthratio, 2.0, 100.0, 0.02) );
+		lanedetectconstants::klengthwidthratio, 2.0, 100.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "kanglewindow",
-		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.02) );
+		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
-		lanedetectconstants::kellipseheight, 20.0, 120.0, 0.02) );
+		lanedetectconstants::kellipseheight, 20.0, 120.0, 0.05) );
 	//Construct from segments filters
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
-		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.02) );
+		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.05) );
 	//Skip blobs
 	//Segment filters
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.02) );
+		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
-		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 10.0, 0.02) );
+		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 10.0, 0.05) );
 	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
-		lanedetectconstants::ksegmentanglewindow, 0.0, 1800.0, 0.02) );
+		lanedetectconstants::ksegmentanglewindow, 0.0, 1800.0, 0.05) );
 	
 	//
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
@@ -202,8 +202,12 @@ int main(int argc,char *argv[])
 	int iterationcount{0};
 	
 	//Iterate through each variable
-	for ( int i = 0; i < laneconstants.size(); i++ ) {
-		if ( i != 0 ) laneconstants[i].Modify();
+	//for ( int i = 0; i < laneconstants.size(); i++ ) {
+	for ( int i = (laneconstants.size() - 1); i >= 0; i-- ) {
+		static bool first{true};
+		if ( first ) laneconstants[i].Modify();
+		first = false;
+		//if ( i != 0 ) laneconstants[i].Modify();
 		for(;;) {
 			resultvalues.NewIteration();
 			UpdateLaneConstants(laneconstants);

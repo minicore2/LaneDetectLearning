@@ -1,3 +1,4 @@
+#include <iostream>
 #include <deque>
 #include <Math.h>
 #include "opencv2/opencv.hpp"
@@ -97,6 +98,7 @@ void ResultValues::NewIteration()
 {
 	NewPattern();
 	detectedframes_ = 0;
+	samescore_ = 0;
 	bestpassed_ = false;
 	previousscore_ = score_;
 	polygondevqueue_.clear();
@@ -129,13 +131,14 @@ void ResultValues::Update(uint32_t totalframes)
 {
 	polygondev_ = Average(polygondevqueue_);
 	score_= 20000.0 + (30000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
-	if ( score_ = previousscore_ ) samescore_++;
-	if ( score_ >= previousscore_ ) {
+	if ( score_ == previousscore_ ) samescore_++;
+	if ( (score_ >= previousscore_) && (samescore_ < 3) ) {
 		improved_ = hasimproved_ = true;
 	} else {
 		improved_ = false;
+		samescore_ = 0;
 	}
-	if ( (hasimproved_ && !improved_) || (samescore_ > 5) ) bestpassed_ = true;
+	if ( hasimproved_ && !improved_ ) bestpassed_ = true;
 	
 	return;
 }
