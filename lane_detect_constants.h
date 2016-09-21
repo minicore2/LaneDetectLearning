@@ -11,7 +11,6 @@ namespace lanedetectconstants {
 	extern float ksegmentsanglewindow;
 	
 	//Final contour filters
-	//uint16_t klength;
 	extern uint16_t kellipseheight;
 	extern float kanglewindow;
 	extern float klengthwidthratio;
@@ -25,8 +24,8 @@ namespace lanedetectconstants {
 	extern double klengthweight;
 	extern double kangleweight;
 	extern double kcenteredweight;
-	extern double kwidthweight;		//-1.0;
-	extern double klowestpointweight;	//-0.25;	//Should be higher but I have bad test videos
+	extern double kwidthweight;
+	extern double klowestpointweight;
 	extern double klowestscorelimit;
 	
 }

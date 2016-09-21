@@ -69,8 +69,9 @@ double StandardDeviation( std::deque<Polygon> &polygons )
 	y2 /= polygons.size();
 	x3 /= polygons.size();
 	y3 /= polygons.size();
-	//Commented out upper points, lower are most critical!
-	double sum{ x0 + y0 + x1 + y1 };// + x2 + y2 + x3 + y3 };
+	//X and lowest points more critical
+	double sum{ x0 + x1 + 0.75*(x2 + x3) }; 
+	//double sum{ x0 + y0 + x1 + y1 + x2 + y2 + x3 + y3 };
 	
 	return sum;
 }

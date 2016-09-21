@@ -16,33 +16,24 @@
 #include "lane_detect_processor.h"
 
 namespace lanedetectconstants {
-
-	//Segment filters
+	
 	uint16_t ksegmentellipseheight{5};
-	float ksegmentanglewindow{134.0f};
-	float ksegmentlengthwidthratio{1.77f};
-	
-	//Construct from segments filters
-	float ksegmentsanglewindow{23.4f};
-	
-	//Final contour filters
-	//uint16_t klength{100};
-	uint16_t kellipseheight{20};
-	float kanglewindow{85.4f};
-	float klengthwidthratio{12.88f};
-	
-	//Scoring variables
-    double kcommonanglewindow = 34.2;
-    uint16_t kminroadwidth = 326.0;
-    uint16_t kmaxroadwidth = 652.0;
-	uint16_t koptimumwidth = 466;
-	//weighting for best grade
-	double klengthweight = 3.8;
-	double kangleweight = -5.3;
-	double kcenteredweight = -4.6;
-	double kwidthweight = 0.4;		//-1.0;
-	double klowestpointweight = 0.7;	//-0.25;	//Should be higher but I have bad test videos
-	double klowestscorelimit = -DBL_MAX;
+	float ksegmentanglewindow{80.0f};
+	float ksegmentlengthwidthratio{1.5f};
+	float ksegmentsanglewindow{45.0f};
+	uint16_t kellipseheight{60};
+	float kanglewindow{80.0f};
+	float klengthwidthratio{7.0f};
+    double kcommonanglewindow{45.0};
+    uint16_t kminroadwidth {200};
+    uint16_t kmaxroadwidth {700};
+	uint16_t koptimumwidth {400};
+	double klengthweight{5.0};
+	double kangleweight{-5.0};
+	double kcenteredweight{-2.5};
+	double kwidthweight{0.0};
+	double klowestpointweight{0.0};
+	double klowestscorelimit{-DBL_MAX};
 	
 }
 
@@ -322,6 +313,7 @@ void FindPolygon( Polygon& polygon,
 /*****************************************************************************************/
 double ScoreContourPair( const Polygon& polygon,
                          const int imagewidth,
+
 						 const EvaluatedContour& leftcontour,
 						 const EvaluatedContour& rightcontour )
 {

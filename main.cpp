@@ -78,12 +78,12 @@ int main(int argc,char *argv[])
 
 	//Create variable classes
 	std::vector<LaneConstant> laneconstants;
+	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
+		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.03) );
 	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
 		lanedetectconstants::ksegmentanglewindow, 0.0, 180.0, 0.01) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 10.0, 0.03) );
-	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 120.0, 0.03) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.01) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -209,36 +209,42 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 {
 	
 	for ( LaneConstant &l : laneconstants) {
-		if (l.variablename_ == "klowestpointweight" ) {
-			lanedetectconstants::klowestpointweight = l.value_;
-		} else if (l.variablename_ == "kwidthweight" ) {
-			lanedetectconstants::kwidthweight = l.value_;
-		} else if (l.variablename_ == "kcenteredweight" ) {
-			lanedetectconstants::kcenteredweight = l.value_;
-		} else if (l.variablename_ == "kangleweight" ) {
-			lanedetectconstants::kangleweight = l.value_;
-		} else if (l.variablename_ == "klengthweight" ) {
-			lanedetectconstants::klengthweight = l.value_;
-		} else if (l.variablename_ == "koptimumwidth" ) {
-			lanedetectconstants::koptimumwidth = l.value_;
-		} else if (l.variablename_ == "kmaxroadwidth" ) {
-			lanedetectconstants::kmaxroadwidth = l.value_;
-		} else if (l.variablename_ == "kminroadwidth" ) {
-			lanedetectconstants::kminroadwidth = l.value_;
-		} else if (l.variablename_ == "kcommonanglewindow" ) {
-			lanedetectconstants::kcommonanglewindow = l.value_;
-		} else if (l.variablename_ == "kanglewindow" ) {
-			lanedetectconstants::kanglewindow = l.value_;
-		} else if (l.variablename_ == "kellipseheight" ) {
-			lanedetectconstants::kellipseheight = l.value_;
-		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
-			lanedetectconstants::ksegmentsanglewindow = l.value_;
-		} else if (l.variablename_ == "ksegmentellipseheight" ) {
+		if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
-		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {
-			lanedetectconstants::ksegmentlengthwidthratio = l.value_;
 		} else if (l.variablename_ == "ksegmentanglewindow" ) {
 			lanedetectconstants::ksegmentanglewindow = l.value_;
+		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {
+			lanedetectconstants::ksegmentlengthwidthratio = l.value_;
+		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
+			lanedetectconstants::ksegmentsanglewindow = l.value_;
+		} else if (l.variablename_ == "kellipseheight" ) {
+			lanedetectconstants::kellipseheight = l.value_;
+		} else if (l.variablename_ == "kanglewindow" ) {
+			lanedetectconstants::kanglewindow = l.value_;
+		} else if (l.variablename_ == "klengthwidthratio" ) {
+			lanedetectconstants::klengthwidthratio = l.value_;
+		} else if (l.variablename_ == "kcommonanglewindow" ) {
+			lanedetectconstants::kcommonanglewindow = l.value_;
+		} else if (l.variablename_ == "kminroadwidth" ) {
+			lanedetectconstants::kminroadwidth = l.value_;
+		} else if (l.variablename_ == "kmaxroadwidth" ) {
+			lanedetectconstants::kmaxroadwidth = l.value_;
+		} else if (l.variablename_ == "koptimumwidth" ) {
+			lanedetectconstants::koptimumwidth = l.value_;
+		} else if (l.variablename_ == "klengthweight" ) {
+			lanedetectconstants::klengthweight = l.value_;
+		} else if (l.variablename_ == "kangleweight" ) {
+			lanedetectconstants::kangleweight = l.value_;
+		} else if (l.variablename_ == "kcenteredweight" ) {
+			lanedetectconstants::kcenteredweight = l.value_;
+		} else if (l.variablename_ == "kwidthweight" ) {
+			lanedetectconstants::kwidthweight = l.value_;
+		} else if (l.variablename_ == "klowestpointweight" ) {
+			lanedetectconstants::klowestpointweight = l.value_;
+		} else {
+			std::cout << "Programming error, variable does not exist!" << std::endl;
+			std::cin.get();
+			exit(0);
 		}
 	}
 

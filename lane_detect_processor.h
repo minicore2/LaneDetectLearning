@@ -13,8 +13,6 @@ struct EvaluatedContour {
     cv::RotatedRect ellipse;
     float lengthwidthratio;
 	float angle;
-	//cv::Moments moment;
-	//cv::Point center;
     cv::Vec4f fitline;
 };
 
