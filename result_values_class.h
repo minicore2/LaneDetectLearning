@@ -25,6 +25,7 @@ class ResultValues
 
 	private:
 		double previousscore_;
+		int samescore_;
 		std::deque<Polygon> polygonqueue_;
 		std::deque<double> polygondevqueue_;
 };

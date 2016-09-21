@@ -158,9 +158,9 @@ int main(int argc,char *argv[])
 		lanedetectconstants::klengthweight, 0.0, 10.0, 0.02) );
 	//Pair filters
 	laneconstants.push_back( LaneConstant( "koptimumwidth",
-		lanedetectconstants::koptimumwidth, 200, 800, 0.02) );
+		lanedetectconstants::koptimumwidth, 100, 1200, 0.02) );
 	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1000, 0.02) );
+		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.02) );
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
 		lanedetectconstants::kminroadwidth, 100, 400, 0.02) );
 	laneconstants.push_back( LaneConstant( "kcommonanglewindow",

@@ -73,7 +73,15 @@ double StandardDeviation( std::deque<Polygon> &polygons )
 	return sum;
 }
 
-ResultValues::ResultValues()
+ResultValues::ResultValues(  ):
+							samescore_{0},
+							detectedframes_{0},
+							previousscore_{0.0},
+							score_{0.0},
+							polygondev_{0.0},
+							bestpassed_{false},
+							improved_{false},
+							hasimproved_{false}
 {
 	
 }
@@ -121,12 +129,13 @@ void ResultValues::Update(uint32_t totalframes)
 {
 	polygondev_ = Average(polygondevqueue_);
 	score_= 20000.0 + (30000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	if ( score_ = previousscore_ ) samescore_++;
 	if ( score_ >= previousscore_ ) {
 		improved_ = hasimproved_ = true;
 	} else {
 		improved_ = false;
 	}
-	if ( hasimproved_ && !improved_ ) bestpassed_ = true;
+	if ( (hasimproved_ && !improved_) || (samescore_ > 5) ) bestpassed_ = true;
 	
 	return;
 }
