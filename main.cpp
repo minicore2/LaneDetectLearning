@@ -107,7 +107,7 @@ int main(int argc,char *argv[])
 	laneconstants.push_back( LaneConstant( "kcenteredweight",
 		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.03) );
 	laneconstants.push_back( LaneConstant( "kwidthweight",
-		lanedetectconstants::kwidthweight, 0.0, 10.0, -0.03) );
+		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.03) );
 	laneconstants.push_back( LaneConstant( "klowestpointweight",
 		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.03) );
 	
