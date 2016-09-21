@@ -18,6 +18,7 @@ LaneConstant::LaneConstant( std::string variablename,
 							hitlimit_{false}
 {
 	range_ = maxvalue - minvalue;
+	if (value_ == minvalue) Reverse();
 }
 
 void LaneConstant::Modify()
