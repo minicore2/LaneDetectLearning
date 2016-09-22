@@ -2,9 +2,11 @@
 #define LANECONSTANT_H
 
 #include <string>
+#include "result_values_class.h"
 
 class LaneConstant
 {
+	friend class ResultValues;
 	public:
 		LaneConstant( std::string variablename,
 					  double initialvalue,
@@ -17,6 +19,7 @@ class LaneConstant
 		std::string variablename_;
 		double value_;
 		bool hitlimit_;
+		bool finished_;
 		int reversedcount_;
 
 	protected:

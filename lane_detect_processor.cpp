@@ -27,12 +27,12 @@ namespace lanedetectconstants {
     double kcommonanglewindow{45.0};
     uint16_t kminroadwidth {200};
     uint16_t kmaxroadwidth {700};
-	uint16_t koptimumwidth {400};
+	uint16_t koptimumwidth {466};
 	double klengthweight{5.0};
-	double kangleweight{-5.0};
-	double kcenteredweight{-2.5};
+	double kangleweight{-4.7};
+	double kcenteredweight{-4.3};
 	double kwidthweight{0.0};
-	double klowestpointweight{0.0};
+	double klowestpointweight{0.9};
 	double klowestscorelimit{-DBL_MAX};
 	
 }

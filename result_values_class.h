@@ -5,13 +5,14 @@
 #include "opencv2/opencv.hpp"
 #include "lane_detect_processor.h"
 
+class LaneConstant;
 class ResultValues
 {
 	public:
-		ResultValues();
+		ResultValues( uint32_t totalframes );
 		void NewPattern();
 		void Push(Polygon polygon);
-		void Update(uint32_t totalframes);
+		void Update( LaneConstant laneconstant );
 		void NewIteration();
 		void NewVariable();
 		void SetPrevious();
@@ -25,6 +26,7 @@ class ResultValues
 	protected:
 
 	private:
+	uint32_t totalframes_;
 		double previousscore_;
 		int samescore_;
 		std::deque<Polygon> polygonqueue_;

@@ -15,7 +15,8 @@ LaneConstant::LaneConstant( std::string variablename,
 							increment_{ increment },
 							direction_{1.0},
 							reversedcount_{0},
-							hitlimit_{false}
+							hitlimit_{false},
+							finished_{false}
 {
 	range_ = maxvalue - minvalue;
 	if ( increment_*direction_ > 0 ) {

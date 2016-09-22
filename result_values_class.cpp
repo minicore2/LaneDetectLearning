@@ -4,6 +4,7 @@
 #include "opencv2/opencv.hpp"
 #include "result_values_class.h"
 #include "lane_detect_processor.h"
+#include "lane_constant_class.h"
 
 double Average( std::deque<double> &values )
 {
@@ -76,7 +77,8 @@ double StandardDeviation( std::deque<Polygon> &polygons )
 	return sum;
 }
 
-ResultValues::ResultValues(  ):
+ResultValues::ResultValues( uint32_t totalframes ):
+							totalframes_{totalframes},
 							samescore_{0},
 							detectedframes_{0},
 							previousscore_{0.0},
@@ -137,10 +139,10 @@ void ResultValues::Push(Polygon polygon)
 	return;
 }
 
-void ResultValues::Update(uint32_t totalframes)
+void ResultValues::Update(LaneConstant laneconstant)
 {
 	polygondev_ = Average(polygondevqueue_);
-	score_= 20000.0 + (15000.0 * detectedframes_)/totalframes - 1.0 * polygondev_;
+	score_= 20000.0 + (35000.0 * detectedframes_)/totalframes_ - 1.0 * polygondev_;
 	std::cout << "Prev score:" << previousscore_ << ", score: " << score_ << std::endl;
 	if ( score_ == previousscore_ ) samescore_++;
 	if ( (score_ >= previousscore_) && (samescore_ < 3) ) {

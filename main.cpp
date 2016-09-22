@@ -91,13 +91,13 @@ int main(int argc,char *argv[])
 	laneconstants.push_back( LaneConstant( "kanglewindow",
 		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.01) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
-		lanedetectconstants::klengthwidthratio, 2.0, 100.0, 0.03) );
+		lanedetectconstants::klengthwidthratio, 2.0, 20.0, 0.02) );
 	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
 		lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.01) );
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
 		lanedetectconstants::kminroadwidth, 100, 400, 0.03) );
 	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.03) );
+		lanedetectconstants::kmaxroadwidth, 600, 1200, 0.03) );
 	laneconstants.push_back( LaneConstant( "koptimumwidth",
 		lanedetectconstants::koptimumwidth, 100, 1200, 0.03) );
 	laneconstants.push_back( LaneConstant( "klengthweight",
@@ -124,7 +124,7 @@ int main(int argc,char *argv[])
 
 	
 	//Create resultsfile vector
-	ResultValues resultvalues;
+	ResultValues resultvalues{totalframes};
 	int iterationcount{0};
 	bool first{true};
 	
@@ -167,6 +167,9 @@ int main(int argc,char *argv[])
 				resultvalues.NewPattern();
 			}
 			
+			resultvalues.Update(laneconstants[i]);
+			if (laneconstants[i].finished_) break;
+			/*
 			//Evaluate iteration
 			resultvalues.Update(totalframes);
 			double runtime{std::chrono::duration_cast<std::chrono::microseconds>
@@ -196,6 +199,7 @@ int main(int argc,char *argv[])
 				laneconstants[i].Reverse();
 			}
 			laneconstants[i].Modify();
+			*/
 		}
 	}
 	
