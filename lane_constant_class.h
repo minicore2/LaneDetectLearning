@@ -14,23 +14,25 @@ class LaneConstant
 					  double maxvalue,
 					  double increment );
 		void Modify();
-		void Reverse();
-		void SetPrevious();
 		std::string variablename_;
 		double value_;
-		bool hitlimit_;
 		bool finished_;
-		int reversedcount_;
-
 	protected:
 
 	private:
+		void Reverse();
 		double minvalue_;
 		double maxvalue_;
 		double increment_;
 		double direction_;
 		double range_;
+		double bestscore_;
+		double bestvalue_;
+		void SetPrevious();
 		double previousvalue_;
+		bool hitlimit_;
+		bool firstpass_;
+		int reversedcount_;
 };
 
 #endif // LANECONSTANT_H

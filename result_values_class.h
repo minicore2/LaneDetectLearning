@@ -12,26 +12,23 @@ class ResultValues
 		ResultValues( uint32_t totalframes );
 		void NewPattern();
 		void Push(Polygon polygon);
-		void Update( LaneConstant laneconstant );
+		void Update( LaneConstant& laneconstant );
 		void NewIteration();
 		void NewVariable();
-		void SetPrevious();
-		bool bestpassed_;
-		bool improved_;
-		bool hasimproved_;
 		double polygondev_;
-		double score_;
+		double outputscore_;
 		uint32_t detectedframes_;
 
 	protected:
 
 	private:
-	uint32_t totalframes_;
+		double score_;
 		double previousscore_;
-		int samescore_;
+		bool firstpass_;
+		double lanedetectmultiplier_;
+		uint32_t totalframes_;
 		std::deque<Polygon> polygonqueue_;
 		std::deque<double> polygondevqueue_;
-		bool firstpass_;
 };
 
 #endif // RESULTVALUES_H

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <deque>
 #include <Math.h>
 #include "opencv2/opencv.hpp"
@@ -79,14 +78,11 @@ double StandardDeviation( std::deque<Polygon> &polygons )
 
 ResultValues::ResultValues( uint32_t totalframes ):
 							totalframes_{totalframes},
-							samescore_{0},
 							detectedframes_{0},
 							previousscore_{0.0},
 							score_{0.0},
 							polygondev_{0.0},
-							bestpassed_{false},
-							improved_{false},
-							hasimproved_{false},
+							lanedetectmultiplier_{0.0},
 							firstpass_{true}
 {
 	
@@ -102,26 +98,14 @@ void ResultValues::NewPattern()
 void ResultValues::NewIteration()
 {
 	NewPattern();
-	previousscore_ = score_;
 	detectedframes_ = 0;
-	previousscore_ = score_;
 	polygondevqueue_.clear();
-	
 	return;
-}
-
-void ResultValues::SetPrevious()
-{
-	score_ = previousscore_;
 }
 
 void ResultValues::NewVariable()
 {
 	NewIteration();
-	samescore_ = 0;
-	bestpassed_ = false;
-	hasimproved_ = false;
-	firstpass_ = true;
 	
 	return;
 }
@@ -139,24 +123,57 @@ void ResultValues::Push(Polygon polygon)
 	return;
 }
 
-void ResultValues::Update(LaneConstant laneconstant)
+void ResultValues::Update(LaneConstant& laneconstant)
 {
-	polygondev_ = Average(polygondevqueue_);
-	score_= 20000.0 + (35000.0 * detectedframes_)/totalframes_ - 1.0 * polygondev_;
-	std::cout << "Prev score:" << previousscore_ << ", score: " << score_ << std::endl;
-	if ( score_ == previousscore_ ) samescore_++;
-	if ( (score_ >= previousscore_) && (samescore_ < 3) ) {
-		if ( firstpass_ ) {
-			improved_ = true;
-			firstpass_ = false;
-		} else {
-			improved_ = hasimproved_ = true;
-		}
-	} else {
-		improved_ = false;
-		samescore_ = 0;
+	//Check for first iteration for this variable
+	if ( laneconstant.firstpass_ ) {
+		laneconstant.bestscore_ = score_;
+		laneconstant.firstpass_ = false;
 	}
-	if ( hasimproved_ && !improved_ ) bestpassed_ = true;
+	
+	//Score
+	polygondev_ = Average(polygondevqueue_);
+	if ( firstpass_ ) { 	//Adjust detected frame multiplier to bring inital score to 0!
+		lanedetectmultiplier_ = polygondev_ * (static_cast<double>(totalframes_)
+			/ static_cast<double>(detectedframes_));
+		firstpass_ = false;
+	}
+	score_= (lanedetectmultiplier_ * detectedframes_)/totalframes_ - polygondev_;
+	outputscore_ = score_;
+
+
+	//Figure it out
+	if ( laneconstant.hitlimit_ ) {
+		if ( (laneconstant.reversedcount_ == 0) && (score_ == previousscore_ )) {
+			laneconstant.Reverse();
+			score_ = previousscore_;
+			laneconstant.value_ = laneconstant.bestvalue_;
+			laneconstant.hitlimit_ = false;
+		} else if ( score_ > previousscore_ ) {
+			laneconstant.finished_ = true;
+		} else {
+			laneconstant.value_ = laneconstant.bestvalue_;
+			score_ = laneconstant.bestscore_ ;
+			laneconstant.finished_ = true;	
+		}
+	} else if ( score_ > previousscore_  ) {
+		if ( score_ > laneconstant.bestscore_ ) {
+			laneconstant.bestscore_ = score_;
+			laneconstant.bestvalue_ = laneconstant.value_;
+		}
+	} else if ( score_ < previousscore_ ) {
+		if ( laneconstant.reversedcount_ > 0 ) {
+			score_ = laneconstant.bestscore_ ;
+			laneconstant.value_ = laneconstant.bestvalue_;
+			laneconstant.finished_ = true;
+		} else {
+			laneconstant.Reverse();
+			score_ = previousscore_;
+		}
+	}
+	previousscore_ = score_;
+	if ( laneconstant.finished_ ) return;
+	laneconstant.Modify();
 	
 	return;
 }

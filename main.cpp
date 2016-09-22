@@ -28,6 +28,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <atomic>
 #include <chrono>
 
 //3rd party libraries
@@ -41,7 +45,7 @@
 
 //Forward declations
 void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants);
-
+void FrameLoaderThread(cv::VideoCapture* videocapture, std::mutex* framesmutex, std::queue<cv::Mat>* frames, std::atomic<bool>* done);
 int main(int argc,char *argv[])
 {
 	//Check arguments passed
@@ -131,6 +135,8 @@ int main(int argc,char *argv[])
 	//Iterate through each variable
 	//for ( int i = 0; i < laneconstants.size(); i++ ) {
 	for ( int i = laneconstants.size() - 1; i >= 0; i-- ) {
+		if ( !first ) laneconstants[i].Modify();
+		first = false;
 		resultvalues.NewVariable();
 		for(;;) {
 			resultvalues.NewIteration();
@@ -147,17 +153,31 @@ int main(int argc,char *argv[])
 			//iterate through each file	
 			for (int j = 1; j < argc; j++ ) {
 				cv::VideoCapture capture(argv[j]);
-				for( int k =0; k < capture.get(cv::CAP_PROP_FRAME_COUNT) - 1; k++  ){
-					cv::Mat frame;
+				std::mutex framesmutex;
+				std::queue<cv::Mat> frames;
+				std::atomic<bool> done{false};
+				//Multi-threading saves ~20% runtime
+				std::thread t_imagequeue( FrameLoaderThread, &capture, &framesmutex, &frames, &done);
+				t_imagequeue.detach();
+				int framecount{0};
+				while ( !(done && frames.empty()) ) {
+					framesmutex.lock();
+					if ( frames.empty() ) {
+						framesmutex.unlock();
+						continue;
+					}
+					framecount++;
+					cv::Mat frame{frames.front()};
+					frames.pop();
+					framesmutex.unlock();
 					Polygon polygon;
-					capture >> frame;
 					ProcessImage( frame, polygon );
 					resultvalues.Push( polygon );
 					frameschecked++;
 					if (frameschecked%messagecount == 0) {
 						std::cout << "Iteration " << iterationcount << ", file " << j << ", ";
 						std::cout << std::fixed << std::setprecision(0);
-						std::cout << ((100.0*k)/capture.get(cv::CAP_PROP_FRAME_COUNT));
+						std::cout << ((100.0*framecount)/capture.get(cv::CAP_PROP_FRAME_COUNT));
 						std::cout << "% file, " << ((100.0*frameschecked)/totalframes);
 						std::cout << "% iteration, variable: ";
 						std::cout << laneconstants[i].variablename_ << std::endl;
@@ -167,41 +187,24 @@ int main(int argc,char *argv[])
 				resultvalues.NewPattern();
 			}
 			
+			//Update
 			resultvalues.Update(laneconstants[i]);
-			if (laneconstants[i].finished_) break;
-			/*
-			//Evaluate iteration
-			resultvalues.Update(totalframes);
 			double runtime{std::chrono::duration_cast<std::chrono::microseconds>
 				(std::chrono::high_resolution_clock::now() - starttime).count()/1000000.0};
 			double fps{totalframes/runtime};
-			
-			//Update results file
 			resultsfile << resultvalues.polygondev_ << ",";
 			resultsfile << resultvalues.detectedframes_ << "," << totalframes << ",";
-			resultsfile << resultvalues.score_ << ",";
+			resultsfile << resultvalues.outputscore_ << ",";
 			resultsfile << std::fixed << std::setprecision(2) << runtime << ",";
 			resultsfile << fps << "," << std::endl;
-		
-			//Evaluate results and adjust
-			if ( first  ) {
-				first = false;
-			} else if ( resultvalues.bestpassed_  || (laneconstants[i].reversedcount_ > 1)) {
-				laneconstants[i].SetPrevious();
-				break;
-			} else if ( laneconstants[i].hitlimit_ && resultvalues.improved_ ) {
-				break;
-			} else if ( resultvalues.improved_ ) {
-				//Do nothing
-			} else {
-				laneconstants[i].SetPrevious();
-				resultvalues.SetPrevious();
-				laneconstants[i].Reverse();
-			}
-			laneconstants[i].Modify();
-			*/
+			if (laneconstants[i].finished_) break;
 		}
 	}
+	resultsfile << "Final" << ",";
+	for( int i = 0; i < laneconstants.size(); i++ ) {
+		resultsfile << laneconstants[i].value_ << ",";
+	}
+	resultsfile << std::endl;
 	
 	//Close up shop
 	resultsfile.close();
@@ -252,5 +255,19 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 		}
 	}
 
+	return;
+}
+
+/*****************************************************************************************/
+void FrameLoaderThread(cv::VideoCapture* videocapture, std::mutex* framesmutex, std::queue<cv::Mat>* frames, std::atomic<bool>* done)
+{
+	for( int i =0; i < videocapture->get(cv::CAP_PROP_FRAME_COUNT) - 1; i++  ){
+		cv::Mat frame;
+		*videocapture >> frame;
+		framesmutex->lock();
+		frames->push(frame);
+		framesmutex->unlock();
+	}
+	*done = true;
 	return;
 }
