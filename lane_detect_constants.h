@@ -21,7 +21,7 @@ namespace lanedetectconstants {
     extern uint16_t kmaxroadwidth;
 	extern uint16_t koptimumwidth;
 	//weighting for best grade
-	extern double klengthweight;
+	extern double kellipseratioweight;
 	extern double kangleweight;
 	extern double kcenteredweight;
 	extern double kwidthweight;

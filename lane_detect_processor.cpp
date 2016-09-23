@@ -17,22 +17,22 @@
 
 namespace lanedetectconstants {
 	
-	uint16_t ksegmentellipseheight{5};
-	float ksegmentanglewindow{80.0f};
-	float ksegmentlengthwidthratio{1.5f};
+	uint16_t ksegmentellipseheight{10};
+	float ksegmentanglewindow{89.0f};
+	float ksegmentlengthwidthratio{2.04f};
 	float ksegmentsanglewindow{45.0f};
-	uint16_t kellipseheight{60};
-	float kanglewindow{80.0f};
-	float klengthwidthratio{7.0f};
-    double kcommonanglewindow{45.0};
-    uint16_t kminroadwidth {200};
-    uint16_t kmaxroadwidth {700};
-	uint16_t koptimumwidth {466};
-	double klengthweight{5.0};
-	double kangleweight{-4.7};
-	double kcenteredweight{-4.3};
-	double kwidthweight{0.0};
-	double klowestpointweight{0.9};
+	uint16_t kellipseheight{21};
+	float kanglewindow{78.2f};
+	float klengthwidthratio{5.92f};
+    double kcommonanglewindow{33.3};
+    uint16_t kminroadwidth {303};
+    uint16_t kmaxroadwidth {628};
+	uint16_t koptimumwidth {400};
+	double kellipseratioweight{1.3};
+	double kangleweight{-2.2};
+	double kcenteredweight{-1.0};
+	double kwidthweight{-2.0};
+	double klowestpointweight{-1.0};
 	double klowestscorelimit{-DBL_MAX};
 	
 }
@@ -120,8 +120,8 @@ void ProcessImage ( cv::Mat image,
 			//If invalid polygon created, goto next
 			if ( newpolygon[0] == cv::Point(0,0) ) continue;
 			//If valid score
-			double score{ ScoreContourPair( newpolygon, image.cols, leftevaluatedontour,
-				rightevaluatedcontour) };
+			double score{ ScoreContourPair( newpolygon, image.cols, image.rows,
+				leftevaluatedontour, rightevaluatedcontour) };
 			//If highest score update
 			if ( score > maxscore ) {
 				leftcontour = leftevaluatedontour.contour;
@@ -313,7 +313,7 @@ void FindPolygon( Polygon& polygon,
 /*****************************************************************************************/
 double ScoreContourPair( const Polygon& polygon,
                          const int imagewidth,
-
+						 const int imageheight,
 						 const EvaluatedContour& leftcontour,
 						 const EvaluatedContour& rightcontour )
 {
@@ -327,15 +327,15 @@ double ScoreContourPair( const Polygon& polygon,
 	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (-DBL_MAX);
 	//Calculate score
 	double weightedscore(0.0);
-	weightedscore += lanedetectconstants::klengthweight * (
-		leftcontour.ellipse.size.height + rightcontour.ellipse.size.height);
+	weightedscore += lanedetectconstants::kellipseratioweight * (
+		leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
 	weightedscore += lanedetectconstants::kangleweight * abs(deviationangle);
 	weightedscore += lanedetectconstants::kcenteredweight * (
 		abs(imagewidth - polygon[0].x - polygon[1].x));
 	weightedscore += lanedetectconstants::kwidthweight * (
-		abs(lanedetectconstants::koptimumwidth -(polygon[0].x - polygon[1].x)));
+		abs(lanedetectconstants::koptimumwidth -(polygon[1].x - polygon[0].x)));
 	weightedscore += lanedetectconstants::klowestpointweight * (
-		imagewidth - polygon[0].x);
+		imageheight - polygon[0].y);
 	return weightedscore;
 }
 
