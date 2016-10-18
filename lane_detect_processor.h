@@ -21,8 +21,6 @@ struct PolygonDifferences {
 	float differencefromaverage;
 };
 
-void CreateKeypoints( const std::vector<Contour>& contours,
-	                  std::vector<cv::KeyPoint>& keypoints );
 void EvaluateSegment( const Contour& contour,
 					  const int imageheight,
 	                  std::vector<EvaluatedContour>&	evaluatedsegments );
@@ -35,7 +33,7 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 void FindPolygon( Polygon& polygon,
 				  const Contour& leftcontour,
 				  const Contour& rightcontour );
-double ScoreContourPair( const Polygon& polygon,
+float ScoreContourPair( const Polygon& polygon,
                          const int imagewidth,
 						 const int imageheight,
 						 const EvaluatedContour& leftcontour,
@@ -44,8 +42,7 @@ void AveragePolygon ( Polygon& polygon,
 					  std::deque<Polygon>& pastpolygons,
 					  int samplestoaverage,
 					  int samplestokeep );
-void ProcessImage ( cv::Mat image,
+void ProcessImage ( cv::Mat& image,
 					Polygon& polygon );
-//void ProcessImage ( cv::Mat image, cv::Mat& cannyimage, Polygon& polygon );
 
 #endif // LANEDETECTPROCESSOR_H

@@ -7,13 +7,12 @@
 
 //3rd party libraries
 #include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/features2d/features2d.hpp"
 
 //project libraries
 #include "lane_detect_constants.h"
 #include "lane_detect_processor.h"
+
+#define INVERSEPI 0.31830988618
 
 namespace lanedetectconstants {
 	
@@ -24,23 +23,22 @@ namespace lanedetectconstants {
 	uint16_t kellipseheight{21};
 	float kanglewindow{78.2f};
 	float klengthwidthratio{5.92f};
-    double kcommonanglewindow{33.3};
-    uint16_t kminroadwidth {303};
-    uint16_t kmaxroadwidth {628};
-	uint16_t koptimumwidth {400};
-	double kellipseratioweight{1.3};
-	double kangleweight{-2.2};
-	double kcenteredweight{-1.0};
-	double kwidthweight{-2.0};
-	double klowestpointweight{-1.0};
-	double klowestscorelimit{-DBL_MAX};
+    float kcommonanglewindow{33.3f};
+    uint16_t kminroadwidth {250};
+    uint16_t kmaxroadwidth {450};
+	uint16_t koptimumwidth {350};
+	float kellipseratioweight{1.3f};
+	float kangleweight{-2.2f};
+	float kcenteredweight{-1.0f};
+	float kwidthweight{-3.0f};
+	float klowestpointweight{-2.0f};
+	float klowestscorelimit{FLT_MIN};
 	
 }
 
 //Main function
-void ProcessImage ( cv::Mat image,
+void ProcessImage ( cv::Mat& image,
                     Polygon& polygon )
-//void ProcessImage ( cv::Mat image, cv::Mat& cannyimage, Polygon& polygon )
 {
 //-----------------------------------------------------------------------------------------
 //Image manipulation
@@ -57,18 +55,17 @@ void ProcessImage ( cv::Mat image,
     double otsuthreshval = cv::threshold( image, image, 0, 255,
 		CV_THRESH_BINARY | CV_THRESH_OTSU );
 	//Canny edge detection
-    cv::Canny(image, image, otsuthreshval*0.5, otsuthreshval );
+    cv::Canny(image, image, otsuthreshval * 0.5, otsuthreshval );
 	//cv::cvtColor( image, cannyimage, CV_GRAY2BGR );
 	std::vector<Contour> detectedcontours;
     std::vector<cv::Vec4i> detectedhierarchy;
     cv::findContours( image, detectedcontours, detectedhierarchy,
 		CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+	//std::cout << "Contours found: " << detectedcontours.size() << std::endl;
 	//Contours removed by position in function
 
 	//ToDo - There's way more I could be doing:
 		//Dilate?
-		//HoughLineP evaluation?
-		//LSDDetector?
 		
 //-----------------------------------------------------------------------------------------
 //Evaluate contours
@@ -88,6 +85,7 @@ void ProcessImage ( cv::Mat image,
 //-----------------------------------------------------------------------------------------	
     std::vector<std::vector<cv::Point>> constructedcontours;
 	ConstructFromSegments( evaluatedchildsegments, constructedcontours );
+	//std::cout << "Contours constructed: " << constructedcontours.size() << std::endl;
 
 //-----------------------------------------------------------------------------------------
 //Evaluate constructed segments
@@ -102,13 +100,15 @@ void ProcessImage ( cv::Mat image,
 	std::vector<EvaluatedContour> leftcontours;
 	std::vector<EvaluatedContour> rightcontours;
 	SortContours( evaluatedparentsegments, image.cols, leftcontours, rightcontours );
+	//std::cout << "Left pairs: " << leftcontours.size() << std::endl;
 	SortContours( evaluatedchildsegments, image.cols, leftcontours, rightcontours );
+	//std::cout << "Right pairs: " << rightcontours.size() << std::endl;
 	
 //-----------------------------------------------------------------------------------------
 //Find highest scoring pair of contours
 //-----------------------------------------------------------------------------------------	
 	Polygon bestpolygon{ cv::Point(0,0), cv::Point(0,0), cv::Point(0,0), cv::Point(0,0) };
-	double maxscore{lanedetectconstants::klowestscorelimit};
+	float maxscore{lanedetectconstants::klowestscorelimit};
 	Contour leftcontour;
 	Contour rightcontour;
 	for ( EvaluatedContour &leftevaluatedontour : leftcontours ) {
@@ -120,7 +120,7 @@ void ProcessImage ( cv::Mat image,
 			//If invalid polygon created, goto next
 			if ( newpolygon[0] == cv::Point(0,0) ) continue;
 			//If valid score
-			double score{ ScoreContourPair( newpolygon, image.cols, image.rows,
+			float score{ ScoreContourPair( newpolygon, image.cols, image.rows,
 				leftevaluatedontour, rightevaluatedcontour) };
 			//If highest score update
 			if ( score > maxscore ) {
@@ -145,21 +145,6 @@ void ProcessImage ( cv::Mat image,
 }
 
 /*****************************************************************************************/	
-void CreateKeypoints( const std::vector<Contour>& contours,
-                      std::vector<cv::KeyPoint>& keypoints )
-{
-	for ( const Contour &contour : contours ) {
-		//Get contour moment
-		cv::Moments moment{ cv::moments( contour, false ) };
-		//Push into keypoint vector
-		keypoints.push_back( cv::KeyPoint{ static_cast<float>(moment.m10/moment.m00),
-		static_cast<float>(moment.m01/moment.m00), static_cast<float>
-			(cv::contourArea(contour)) } );
-	}
-	return;
-}
-	
-/*****************************************************************************************/	
 void EvaluateSegment( const Contour& contour,
                       const int imageheight,
 					  std::vector<EvaluatedContour>& evaluatedsegments )
@@ -170,10 +155,10 @@ void EvaluateSegment( const Contour& contour,
 	cv::Vec4f fitline;
 	cv::fitLine(contour, fitline, CV_DIST_L2, 0, 0.1, 0.1 );
 	//Filter by angle
-	float angle = atan2(fitline[1], fitline[0]) * (180.0f / CV_PI);
-	if(angle < 0 ) angle += 180.0;
-	if ( abs(angle - 90.0) > lanedetectconstants::ksegmentanglewindow ) return;
-	//if ( abs(ellipse.angle - 90.0) > lanedetectconstants::ksegmentanglewindow )
+	float angle = atan2(fitline[1], fitline[0]) * (180.0f * INVERSEPI);
+	if(angle < 0 ) angle += 180.0f;
+	if ( abs(angle - 90.0f) > lanedetectconstants::ksegmentanglewindow ) return;
+	//if ( abs(ellipse.angle - 90.0f) > lanedetectconstants::ksegmentanglewindow )
 	//Create ellipse
 	cv::RotatedRect ellipse{ fitEllipse(contour) };
 	//Filter by screen position
@@ -204,7 +189,7 @@ void ConstructFromSegments( const  std::vector<EvaluatedContour>& evaluatedsegme
 {
     for ( const EvaluatedContour &segcontour1 : evaluatedsegments ) {
 		for ( const EvaluatedContour &segcontour2 : evaluatedsegments ) {
-			float createdangle = (180.0 / CV_PI) * atan2(segcontour1.ellipse.center.y -
+			float createdangle = (180.0f * INVERSEPI) * atan2(segcontour1.ellipse.center.y -
 				segcontour2.ellipse.center.y, segcontour1.ellipse.center.x -
 				segcontour2.ellipse.center.x);
 			float angledifference1 = abs(segcontour1.angle -
@@ -237,14 +222,14 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 		//if ( evaluatedcontour.contour.arcLength(contour, false) <
 		//	lanedetectconstants::klength ) continue;
 		//Filter by angle
-		if ( abs(evaluatedcontour.angle - 90.0) >
+		if ( abs(evaluatedcontour.angle - 90.0f) >
 			lanedetectconstants::kanglewindow ) continue;
 		//Filter by length to width ratio
 		if ( evaluatedcontour.lengthwidthratio < lanedetectconstants::klengthwidthratio )
 			continue;
 		//Push into either left or right evaluated contour set
-		if ( evaluatedcontour.ellipse.center.x < (imagewidth/2) ) {
-		//if ( evaluatedcontour.center.x < (imagewidth/2) ) {			//moment center
+		if ( evaluatedcontour.ellipse.center.x < (imagewidth * 0.5f) ) {
+		//if ( evaluatedcontour.center.x < (imagewidth * 0.5f) ) {			//moment center
 			leftcontours.push_back( evaluatedcontour );
 		} else {
 			rightcontours.push_back( evaluatedcontour );
@@ -276,15 +261,15 @@ void FindPolygon( Polygon& polygon,
 	int miny{std::max(minmaxyleft.first->y, minmaxyright.first->y)};
 	
 	//Define slopes
-	double leftslope{ static_cast<double>(leftmaxy-leftminy)/static_cast<double>(
+	float leftslope{ static_cast<float>(leftmaxy-leftminy)/static_cast<float>(
 		leftmaxx - leftminx) };
-    double rightslope{ static_cast<double>(rightmaxy-rightminy)/static_cast<double>(
+    float rightslope{ static_cast<float>(rightmaxy-rightminy)/static_cast<float>(
 		rightmaxx - rightminx) };
-    cv::Point leftcenter = cv::Point((leftmaxx + leftminx)/2.0,(leftmaxy + leftminy)/2.0);
-    cv::Point rightcenter = cv::Point((rightmaxx + rightminx)/2.0,(rightmaxy + rightminy)/2.0);
+    cv::Point leftcenter = cv::Point((leftmaxx + leftminx) * 0.5f,(leftmaxy + leftminy) * 0.5f);
+    cv::Point rightcenter = cv::Point((rightmaxx + rightminx) * 0.5f,(rightmaxy + rightminy) * 0.5f);
 
 	//If valid slopes found, calculate 4 vertices of the polygon
-    if ( (std::fpclassify(leftslope) == 1024) && (std::fpclassify(rightslope) == 1024) ){
+    if ( (std::fpclassify(leftslope) == FP_NORMAL) && (std::fpclassify(rightslope) == FP_NORMAL) ){
         //Calculate points
         cv::Point bottomleft = cv::Point(leftcenter.x +
 			(maxy - leftcenter.y)/leftslope, maxy);
@@ -295,9 +280,9 @@ void FindPolygon( Polygon& polygon,
         cv::Point topleft = cv::Point(leftcenter.x -
 			(leftcenter.y - miny)/leftslope, miny);
         //Check validity of points
-        if ((((leftslope < 0.0) && (rightslope > 0.0)) ||
-            ((leftslope > 0.0) && (rightslope > 0.0)) ||
-            ((leftslope < 0.0) && (rightslope < 0.0))) &&
+        if ((((leftslope < 0.0f) && (rightslope > 0.0f)) ||
+            ((leftslope > 0.0f) && (rightslope > 0.0f)) ||
+            ((leftslope < 0.0f) && (rightslope < 0.0f))) &&
             ((bottomleft.x < bottomright.x) && (topleft.x < topright.x))){
 
             //Construct polygon
@@ -311,22 +296,22 @@ void FindPolygon( Polygon& polygon,
 }
 
 /*****************************************************************************************/
-double ScoreContourPair( const Polygon& polygon,
+float ScoreContourPair( const Polygon& polygon,
                          const int imagewidth,
 						 const int imageheight,
 						 const EvaluatedContour& leftcontour,
 						 const EvaluatedContour& rightcontour )
 {
 	//Filter by common angle
-	double deviationangle{ 180.0 - leftcontour.angle -
+	float deviationangle{ 180.0f - leftcontour.angle -
 		rightcontour.angle };
-	if ( abs(deviationangle) > lanedetectconstants::kcommonanglewindow ) return (-DBL_MAX);
+	if ( abs(deviationangle) > lanedetectconstants::kcommonanglewindow ) return (FLT_MIN);
 	//Filter by road width
 	int roadwidth{ polygon[1].x - polygon[0].x };
-	if ( roadwidth < lanedetectconstants::kminroadwidth ) return (-DBL_MAX);
-	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (-DBL_MAX);
+	if ( roadwidth < lanedetectconstants::kminroadwidth ) return (FLT_MIN);
+	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (FLT_MIN);
 	//Calculate score
-	double weightedscore(0.0);
+	float weightedscore{ 0.0f };
 	weightedscore += lanedetectconstants::kellipseratioweight * (
 		leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
 	weightedscore += lanedetectconstants::kangleweight * abs(deviationangle);
