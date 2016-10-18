@@ -264,6 +264,16 @@ void FrameLoaderThread(cv::VideoCapture* videocapture, std::mutex* framesmutex, 
 {
 	for( int i =0; i < videocapture->get(cv::CAP_PROP_FRAME_COUNT) - 1; i++  ){
 		cv::Mat frame;
+		for (;;) {			//Don't let queqed frames get too large or program crashes
+			framesmutex->lock();
+			unsigned long int framesqueqed { frames->size() };
+			framesmutex->unlock();
+			if (framesqueqed < 1000) {
+				break;
+			} else {
+				std::this_thread::sleep_for(std::chrono::microseconds(500000)); //500ms
+			}
+		}
 		*videocapture >> frame;
 		framesmutex->lock();
 		frames->push(frame);
