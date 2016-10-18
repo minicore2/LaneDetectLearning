@@ -16,23 +16,23 @@
 
 namespace lanedetectconstants {
 	
-	uint16_t ksegmentellipseheight{10};
-	float ksegmentanglewindow{89.0f};
-	float ksegmentlengthwidthratio{2.04f};
-	float ksegmentsanglewindow{45.0f};
-	uint16_t kellipseheight{21};
-	float kanglewindow{78.2f};
-	float klengthwidthratio{5.92f};
-    float kcommonanglewindow{33.3f};
-    uint16_t kminroadwidth {250};
-    uint16_t kmaxroadwidth {450};
-	uint16_t koptimumwidth {350};
-	float kellipseratioweight{1.3f};
-	float kangleweight{-2.2f};
-	float kcenteredweight{-1.0f};
-	float kwidthweight{-3.0f};
-	float klowestpointweight{-2.0f};
-	float klowestscorelimit{FLT_MIN};
+	uint16_t ksegmentellipseheight{7};
+	float ksegmentanglewindow{85.0f};
+	float ksegmentlengthwidthratio{1.3f};
+	float ksegmentsanglewindow{80.0f};
+	uint16_t kellipseheight{16};
+	float kanglewindow{85.0f};
+	float klengthwidthratio{1.5f};
+    float kcommonanglewindow{156.0f};
+    uint16_t kminroadwidth {132};
+    uint16_t kmaxroadwidth {570};
+	uint16_t koptimumwidth {332};
+	float kellipseratioweight{0.0f};
+	float kangleweight{-0.5f};
+	float kcenteredweight{-3.5f};
+	float kwidthweight{-1.0f};
+	float klowestpointweight{-0.0f};
+	float klowestscorelimit{-FLT_MAX};
 	
 }
 
@@ -305,11 +305,11 @@ float ScoreContourPair( const Polygon& polygon,
 	//Filter by common angle
 	float deviationangle{ 180.0f - leftcontour.angle -
 		rightcontour.angle };
-	if ( abs(deviationangle) > lanedetectconstants::kcommonanglewindow ) return (FLT_MIN);
+	if ( abs(deviationangle) > lanedetectconstants::kcommonanglewindow ) return (-FLT_MAX);
 	//Filter by road width
 	int roadwidth{ polygon[1].x - polygon[0].x };
-	if ( roadwidth < lanedetectconstants::kminroadwidth ) return (FLT_MIN);
-	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (FLT_MIN);
+	if ( roadwidth < lanedetectconstants::kminroadwidth ) return (-FLT_MAX);
+	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (-FLT_MAX);
 	//Calculate score
 	float weightedscore{ 0.0f };
 	weightedscore += lanedetectconstants::kellipseratioweight * (
