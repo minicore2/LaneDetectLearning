@@ -16,22 +16,22 @@
 
 namespace lanedetectconstants {
 	
-	uint16_t ksegmentellipseheight{7};
+	uint16_t ksegmentellipseheight{15};
 	float ksegmentanglewindow{85.0f};
 	float ksegmentlengthwidthratio{1.3f};
-	float ksegmentsanglewindow{80.0f};
+	float ksegmentsanglewindow{69.0f};
 	uint16_t kellipseheight{16};
-	float kanglewindow{85.0f};
+	//float kanglewindow{85.0f};
 	float klengthwidthratio{1.5f};
-    float kcommonanglewindow{156.0f};
-    uint16_t kminroadwidth {132};
+    float kcommonanglewindow{162.0f};
+    uint16_t kminroadwidth {229};
     uint16_t kmaxroadwidth {570};
-	uint16_t koptimumwidth {332};
-	float kellipseratioweight{0.0f};
-	float kangleweight{-0.5f};
+	uint16_t koptimumwidth {414};
+	//float kellipseratioweight{0.0f};
+	//float kangleweight{-0.0f};
 	float kcenteredweight{-3.5f};
-	float kwidthweight{-1.0f};
-	float klowestpointweight{-0.0f};
+	float kwidthweight{-2.75f};
+	//float klowestpointweight{-0.0f};
 	float klowestscorelimit{-FLT_MAX};
 	
 }
@@ -222,8 +222,8 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 		//if ( evaluatedcontour.contour.arcLength(contour, false) <
 		//	lanedetectconstants::klength ) continue;
 		//Filter by angle
-		if ( abs(evaluatedcontour.angle - 90.0f) >
-			lanedetectconstants::kanglewindow ) continue;
+		//if ( abs(evaluatedcontour.angle - 90.0f) >
+		//	lanedetectconstants::kanglewindow ) continue;
 		//Filter by length to width ratio
 		if ( evaluatedcontour.lengthwidthratio < lanedetectconstants::klengthwidthratio )
 			continue;
@@ -312,15 +312,15 @@ float ScoreContourPair( const Polygon& polygon,
 	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (-FLT_MAX);
 	//Calculate score
 	float weightedscore{ 0.0f };
-	weightedscore += lanedetectconstants::kellipseratioweight * (
-		leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
-	weightedscore += lanedetectconstants::kangleweight * abs(deviationangle);
+	//weightedscore += lanedetectconstants::kellipseratioweight * (
+	//	leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
+	//weightedscore += lanedetectconstants::kangleweight * abs(deviationangle);
 	weightedscore += lanedetectconstants::kcenteredweight * (
 		abs(imagewidth - polygon[0].x - polygon[1].x));
 	weightedscore += lanedetectconstants::kwidthweight * (
 		abs(lanedetectconstants::koptimumwidth -(polygon[1].x - polygon[0].x)));
-	weightedscore += lanedetectconstants::klowestpointweight * (
-		imageheight - polygon[0].y);
+	//weightedscore += lanedetectconstants::klowestpointweight * (
+	//	imageheight - polygon[0].y);
 	return weightedscore;
 }
 

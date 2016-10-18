@@ -12,7 +12,7 @@ namespace lanedetectconstants {
 	
 	//Final contour filters
 	extern uint16_t kellipseheight;
-	extern float kanglewindow;
+	//extern float kanglewindow;
 	extern float klengthwidthratio;
 	
 	//Scoring variables
@@ -21,11 +21,11 @@ namespace lanedetectconstants {
     extern uint16_t kmaxroadwidth;
 	extern uint16_t koptimumwidth;
 	//weighting for best grade
-	extern float kellipseratioweight;
-	extern float kangleweight;
+	//extern float kellipseratioweight;
+	//extern float kangleweight;
 	extern float kcenteredweight;
 	extern float kwidthweight;
-	extern float klowestpointweight;
+	//extern float klowestpointweight;
 	extern float klowestscorelimit;
 	
 }

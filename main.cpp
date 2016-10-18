@@ -83,16 +83,16 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
-	laneconstants.push_back( LaneConstant( "kellipseratioweight",
-		lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kangleweight",
-		lanedetectconstants::kangleweight, -10.0, 0.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "kellipseratioweight",
+	//	lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "kangleweight",
+	//	lanedetectconstants::kangleweight, -10.0, 0.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kcenteredweight",
 		lanedetectconstants::kcenteredweight, -10.0, 0.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kwidthweight",
 		lanedetectconstants::kwidthweight, -10.0, 0.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestpointweight",
-		lanedetectconstants::klowestpointweight, -10.0, 0.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "klowestpointweight",
+	//	lanedetectconstants::klowestpointweight, -10.0, 0.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
 		lanedetectconstants::ksegmentellipseheight, 0.0, 100.0, 0.03*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
@@ -103,8 +103,8 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.03*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
 		lanedetectconstants::kellipseheight, 15.0, 120.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kanglewindow",
-		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.03*increment) );
+	//laneconstants.push_back( LaneConstant( "kanglewindow",
+	//	lanedetectconstants::kanglewindow, 0.0, 180.0, 0.03*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
 		lanedetectconstants::klengthwidthratio, 2.0, 20.0, 0.02*increment) );
 	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
@@ -227,8 +227,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::ksegmentsanglewindow = l.value_;
 		} else if (l.variablename_ == "kellipseheight" ) {
 			lanedetectconstants::kellipseheight = l.value_;
-		} else if (l.variablename_ == "kanglewindow" ) {
-			lanedetectconstants::kanglewindow = l.value_;
+		//} else if (l.variablename_ == "kanglewindow" ) {
+		//	lanedetectconstants::kanglewindow = l.value_;
 		} else if (l.variablename_ == "klengthwidthratio" ) {
 			lanedetectconstants::klengthwidthratio = l.value_;
 		} else if (l.variablename_ == "kcommonanglewindow" ) {
@@ -239,16 +239,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::kmaxroadwidth = l.value_;
 		} else if (l.variablename_ == "koptimumwidth" ) {
 			lanedetectconstants::koptimumwidth = l.value_;
-		} else if (l.variablename_ == "kellipseratioweight" ) {
-			lanedetectconstants::kellipseratioweight = l.value_;
-		} else if (l.variablename_ == "kangleweight" ) {
-			lanedetectconstants::kangleweight = l.value_;
+		//} else if (l.variablename_ == "kellipseratioweight" ) {
+		//	lanedetectconstants::kellipseratioweight = l.value_;
+		//} else if (l.variablename_ == "kangleweight" ) {
+		//	lanedetectconstants::kangleweight = l.value_;
 		} else if (l.variablename_ == "kcenteredweight" ) {
 			lanedetectconstants::kcenteredweight = l.value_;
 		} else if (l.variablename_ == "kwidthweight" ) {
 			lanedetectconstants::kwidthweight = l.value_;
-		} else if (l.variablename_ == "klowestpointweight" ) {
-			lanedetectconstants::klowestpointweight = l.value_;
+		//} else if (l.variablename_ == "klowestpointweight" ) {
+		//	lanedetectconstants::klowestpointweight = l.value_;
 		} else {
 			std::cout << "Programming error, variable does not exist!" << std::endl;
 			std::cin.get();
