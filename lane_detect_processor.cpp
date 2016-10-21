@@ -17,13 +17,13 @@
 namespace lanedetectconstants {
 	
 	uint16_t ksegmentellipseheight{15};
-	float ksegmentanglewindow{85.0f};		//Useless 
+	float ksegmentanglewindow{90.0f};		//0 - 90; Ineffective?
 	float ksegmentlengthwidthratio{1.31f};
-	float ksegmentsanglewindow{72.0f};		//Useless
-	uint16_t kellipseheight{15};			//Useless
-	float kanglewindow{85.0f};				//Useless
+	float ksegmentsanglewindow{60.0f};		//0 - 90; Ineffective?
+	uint16_t kellipseheight{0};				//Ineffective?
+	float kanglewindow{90.0f};				//0 - 90; Ineffective?
 	float klengthwidthratio{1.3f};
-    float kcommonanglewindow{170.3f};		//Almost useless
+    float kcommonanglewindow{120.0f};		//0 - 180; Ineffective?
     uint16_t kminroadwidth {241};
     uint16_t kmaxroadwidth {526};
 	uint16_t koptimumwidth {358};

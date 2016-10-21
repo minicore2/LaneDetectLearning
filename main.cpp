@@ -82,6 +82,7 @@ int main(int argc,char *argv[])
 
 	//Create variable classes
 	double increment{0.5};
+	std::vector<LaneConstant> laneconstants;
 	laneconstants.push_back( LaneConstant( "kcenteredweight",
 		lanedetectconstants::kcenteredweight, 0.0, 10.0, 0.01*increment) );
 	laneconstants.push_back( LaneConstant( "kwidthweight",
@@ -92,7 +93,6 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentellipseheight, 0.0, 100.0, 0.01*increment) );
 	laneconstants.push_back( LaneConstant( "kangleweight",
 		lanedetectconstants::kangleweight, 0.0, 10.0, 0.01*increment) );
-	std::vector<LaneConstant> laneconstants;
 	laneconstants.push_back( LaneConstant( "kellipseratioweight",
 		lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.01*increment) );
 	//laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
@@ -101,20 +101,20 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.01*increment) );
 	//laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 	//	lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.01*increment) );
-	//laneconstants.push_back( LaneConstant( "kellipseheight",
-	//	lanedetectconstants::kellipseheight, 5.0, 120.0, 0.01*increment) );
+	laneconstants.push_back( LaneConstant( "kellipseheight",
+		lanedetectconstants::kellipseheight, 0.0, 20.0, 0.01*increment) );
 	//laneconstants.push_back( LaneConstant( "kanglewindow",
 	//	lanedetectconstants::kanglewindow, 0.0, 180.0, 0.01*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
 		lanedetectconstants::klengthwidthratio, 1.0, 5.0, 0.02*increment) );
-	//laneconstants.push_back( LaneConstant( "kcommonanglewindow",
-	//	lanedetectconstants::kcommonanglewindow, 0.0, 180.0, 0.01*increment) );
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
 		lanedetectconstants::kminroadwidth, 100, 400, 0.01*increment) );
 	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
 		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.03*increment) );
 	laneconstants.push_back( LaneConstant( "koptimumwidth",
 		lanedetectconstants::koptimumwidth, 100, 1200, 0.03*increment) );
+	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
+		lanedetectconstants::kcommonanglewindow, 60.0, 135.0, 0.01*increment) );
 	
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
