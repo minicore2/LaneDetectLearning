@@ -17,21 +17,21 @@
 namespace lanedetectconstants {
 	
 	uint16_t ksegmentellipseheight{15};
-	float ksegmentanglewindow{85.0f};
-	float ksegmentlengthwidthratio{1.3f};
-	float ksegmentsanglewindow{69.0f};
-	uint16_t kellipseheight{16};
-	//float kanglewindow{85.0f};
-	float klengthwidthratio{1.5f};
-    float kcommonanglewindow{162.0f};
-    uint16_t kminroadwidth {229};
-    uint16_t kmaxroadwidth {570};
-	uint16_t koptimumwidth {414};
-	//float kellipseratioweight{0.0f};
-	//float kangleweight{-0.0f};
-	float kcenteredweight{-3.5f};
-	float kwidthweight{-2.75f};
-	//float klowestpointweight{-0.0f};
+	float ksegmentanglewindow{85.0f};		//Useless 
+	float ksegmentlengthwidthratio{1.31f};
+	float ksegmentsanglewindow{72.0f};		//Useless
+	uint16_t kellipseheight{15};			//Useless
+	float kanglewindow{85.0f};				//Useless
+	float klengthwidthratio{1.3f};
+    float kcommonanglewindow{170.3f};		//Almost useless
+    uint16_t kminroadwidth {241};
+    uint16_t kmaxroadwidth {526};
+	uint16_t koptimumwidth {358};
+	float kellipseratioweight{1.0f};
+	float kangleweight{1.0f};
+	float kcenteredweight{6.0f};
+	float kwidthweight{0.8f};
+	float klowestpointweight{9.75f};
 	float klowestscorelimit{-FLT_MAX};
 	
 }
@@ -61,7 +61,6 @@ void ProcessImage ( cv::Mat& image,
     std::vector<cv::Vec4i> detectedhierarchy;
     cv::findContours( image, detectedcontours, detectedhierarchy,
 		CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
-	//std::cout << "Contours found: " << detectedcontours.size() << std::endl;
 	//Contours removed by position in function
 
 	//ToDo - There's way more I could be doing:
@@ -222,8 +221,8 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 		//if ( evaluatedcontour.contour.arcLength(contour, false) <
 		//	lanedetectconstants::klength ) continue;
 		//Filter by angle
-		//if ( abs(evaluatedcontour.angle - 90.0f) >
-		//	lanedetectconstants::kanglewindow ) continue;
+		if ( abs(evaluatedcontour.angle - 90.0f) >
+			lanedetectconstants::kanglewindow ) continue;
 		//Filter by length to width ratio
 		if ( evaluatedcontour.lengthwidthratio < lanedetectconstants::klengthwidthratio )
 			continue;
@@ -312,15 +311,15 @@ float ScoreContourPair( const Polygon& polygon,
 	if ( roadwidth > lanedetectconstants::kmaxroadwidth ) return (-FLT_MAX);
 	//Calculate score
 	float weightedscore{ 0.0f };
-	//weightedscore += lanedetectconstants::kellipseratioweight * (
-	//	leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
-	//weightedscore += lanedetectconstants::kangleweight * abs(deviationangle);
-	weightedscore += lanedetectconstants::kcenteredweight * (
+	weightedscore += lanedetectconstants::kellipseratioweight * (
+		leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
+	weightedscore -= lanedetectconstants::kangleweight * abs(deviationangle);
+	weightedscore -= lanedetectconstants::kcenteredweight * (
 		abs(imagewidth - polygon[0].x - polygon[1].x));
-	weightedscore += lanedetectconstants::kwidthweight * (
+	weightedscore -= lanedetectconstants::kwidthweight * (
 		abs(lanedetectconstants::koptimumwidth -(polygon[1].x - polygon[0].x)));
-	//weightedscore += lanedetectconstants::klowestpointweight * (
-	//	imageheight - polygon[0].y);
+	weightedscore -= lanedetectconstants::klowestpointweight * (
+		imageheight - polygon[0].y);
 	return weightedscore;
 }
 

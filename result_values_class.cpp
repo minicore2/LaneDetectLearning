@@ -112,7 +112,7 @@ void ResultValues::NewVariable()
 
 void ResultValues::Push(Polygon polygon)
 {
-	int valuestokeep{30};
+	int valuestokeep{150};	//10 seconds 
 	if ( polygon[0] != cv::Point(0,0) ) {
 		detectedframes_++;
 		polygonqueue_.push_back(polygon);
