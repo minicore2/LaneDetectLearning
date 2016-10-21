@@ -83,38 +83,49 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
-	laneconstants.push_back( LaneConstant( "kcenteredweight",
-		lanedetectconstants::kcenteredweight, 0.0, 10.0, 0.01*increment) );
-	laneconstants.push_back( LaneConstant( "kwidthweight",
-		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.01*increment) );
-	laneconstants.push_back( LaneConstant( "klowestpointweight",
-		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.01*increment) );
+	//Run from least effective to most effective!
+	
+	//First, segment values
+	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
+		lanedetectconstants::ksegmentanglewindow, 0.0, 90.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 100.0, 0.01*increment) );
-	laneconstants.push_back( LaneConstant( "kangleweight",
-		lanedetectconstants::kangleweight, 0.0, 10.0, 0.01*increment) );
-	laneconstants.push_back( LaneConstant( "kellipseratioweight",
-		lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.01*increment) );
-	//laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
-	//	lanedetectconstants::ksegmentanglewindow, 0.0, 90.0, 0.01*increment) );
+		lanedetectconstants::ksegmentellipseheight, 0.0, 15.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
-		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.01*increment) );
-	//laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
-	//	lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.01*increment) );
+		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
+		
+	//Segment construction values
+	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
+		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.05*increment) );
+		
+	//Overall contour values
+	laneconstants.push_back( LaneConstant( "kanglewindow",
+		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
-		lanedetectconstants::kellipseheight, 0.0, 20.0, 0.01*increment) );
-	//laneconstants.push_back( LaneConstant( "kanglewindow",
-	//	lanedetectconstants::kanglewindow, 0.0, 180.0, 0.01*increment) );
+		lanedetectconstants::kellipseheight, 0.0, 60.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
-		lanedetectconstants::klengthwidthratio, 1.0, 5.0, 0.02*increment) );
+		lanedetectconstants::klengthwidthratio, 1.0, 10.0, 0.05*increment) );
+	
+	//Weed out polygons
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
-		lanedetectconstants::kminroadwidth, 100, 400, 0.01*increment) );
+		lanedetectconstants::kminroadwidth, 100, 400, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.03*increment) );
+		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "koptimumwidth",
-		lanedetectconstants::koptimumwidth, 100, 1200, 0.03*increment) );
+		lanedetectconstants::koptimumwidth, 100, 1200, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
-		lanedetectconstants::kcommonanglewindow, 60.0, 135.0, 0.01*increment) );
+		lanedetectconstants::kcommonanglewindow, 60.0, 150.0, 0.05*increment) );
+	
+	//Finally, weighting
+	laneconstants.push_back( LaneConstant( "kcenteredweight",
+		lanedetectconstants::kcenteredweight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kwidthweight",
+		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klowestpointweight",
+		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kangleweight",
+		lanedetectconstants::kangleweight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kellipseratioweight",
+		lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.05*increment) );
 	
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
@@ -134,8 +145,8 @@ int main(int argc,char *argv[])
 	bool first{true};
 	
 	//Iterate through each variable
-	//for ( int i = 0; i < laneconstants.size(); i++ ) {
-	for ( int i = laneconstants.size() - 1; i >= 0; i-- ) {
+	for ( int i = 0; i < laneconstants.size(); i++ ) {
+	//for ( int i = laneconstants.size() - 1; i >= 0; i-- ) {
 		if ( !first ) laneconstants[i].Modify();
 		first = false;
 		resultvalues.NewVariable();
