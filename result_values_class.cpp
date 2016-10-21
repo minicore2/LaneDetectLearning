@@ -138,7 +138,8 @@ void ResultValues::Update(LaneConstant& laneconstant)
 			/ static_cast<double>(detectedframes_));
 		firstpass_ = false;
 	}
-	score_= (lanedetectmultiplier_ * detectedframes_)/totalframes_ - polygondev_;
+	//First multiplier favors # of lanes vs stdev!
+	score_= 0.8 * (lanedetectmultiplier_ * detectedframes_)/totalframes_ - polygondev_;
 	outputscore_ = score_;
 
 
