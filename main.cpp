@@ -84,7 +84,7 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	//Run from least effective to most effective!
-	
+	/*
 	//First, segment values
 	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
 		lanedetectconstants::ksegmentanglewindow, 0.0, 90.0, 0.05*increment) );
@@ -104,7 +104,7 @@ int main(int argc,char *argv[])
 		lanedetectconstants::kellipseheight, 0.0, 60.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
 		lanedetectconstants::klengthwidthratio, 1.0, 10.0, 0.05*increment) );
-	
+	*/
 	//Weed out polygons
 	laneconstants.push_back( LaneConstant( "kminroadwidth",
 		lanedetectconstants::kminroadwidth, 100, 400, 0.05*increment) );
