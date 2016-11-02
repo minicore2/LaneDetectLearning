@@ -31,18 +31,32 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 				   std::vector<EvaluatedContour>& leftcontours,
 				   std::vector<EvaluatedContour>& rightcontours );
 void FindPolygon( Polygon& polygon,
-				  const Contour& leftcontour,
-				  const Contour& rightcontour );
+                  const Contour& leftcontour,
+				  const Contour& rightcontour,
+				  bool useoptimaly = false );
 float ScoreContourPair( const Polygon& polygon,
                          const int imagewidth,
 						 const int imageheight,
 						 const EvaluatedContour& leftcontour,
 						 const EvaluatedContour& rightcontour );
-void AveragePolygon ( Polygon& polygon,
-					  std::deque<Polygon>& pastpolygons,
-					  int samplestoaverage,
-					  int samplestokeep );
-void ProcessImage ( cv::Mat& image,
-					Polygon& polygon );
+float PercentMatch( const Polygon& polygon,
+					const cv::Mat& optimalmat );
+float PercentMatch2( const Polygon& polygon,
+					 const cv::Mat& optimalmat,
+					 const uint16_t optimalarea );
+float PercentMatch3( const Polygon& polygon,
+					 const Polygon& optimalpolygon,
+					 const uint16_t optimalarea );
+int32_t ScorePolygonByPoint( const Polygon& polygon,
+							 const Polygon& optimalpolygon );
+void AveragePolygon( Polygon& polygon,
+					 std::deque<Polygon>& pastpolygons,
+					 int samplestoaverage,
+					 int samplestokeep );
+void ProcessImage( cv::Mat& image,
+				   Polygon& polygon );
+uint32_t FastSquareRoot( int32_t x );
+float FastArcTan2( const float y,
+				   const float x );
 
 #endif // LANEDETECTPROCESSOR_H

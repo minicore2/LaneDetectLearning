@@ -83,50 +83,22 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
-	//Run from least effective to most effective!
-	/*
-	//First, segment values
-	laneconstants.push_back( LaneConstant( "ksegmentanglewindow",
-		lanedetectconstants::ksegmentanglewindow, 0.0, 90.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kellipseheight",
+		lanedetectconstants::kellipseheight, 10.0, 50.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kminimumangle",
+		lanedetectconstants::kminimumangle, 5.0, 30.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klengthwidthratio",
+		lanedetectconstants::klengthwidthratio, 1.0, 15.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 15.0, 0.05*increment) );
+		lanedetectconstants::ksegmentellipseheight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "ksegmentminimumangle",
+		lanedetectconstants::ksegmentminimumangle, 5.0, 30.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
-		
-	//Segment construction values
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
-		lanedetectconstants::ksegmentsanglewindow, 0.0, 90.0, 0.05*increment) );
-		
-	//Overall contour values
-	laneconstants.push_back( LaneConstant( "kanglewindow",
-		lanedetectconstants::kanglewindow, 0.0, 180.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kellipseheight",
-		lanedetectconstants::kellipseheight, 0.0, 60.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klengthwidthratio",
-		lanedetectconstants::klengthwidthratio, 1.0, 10.0, 0.05*increment) );
-	*/
-	//Weed out polygons
-	laneconstants.push_back( LaneConstant( "kminroadwidth",
-		lanedetectconstants::kminroadwidth, 100, 400, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kmaxroadwidth",
-		lanedetectconstants::kmaxroadwidth, 400, 1200, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "koptimumwidth",
-		lanedetectconstants::koptimumwidth, 100, 1200, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kcommonanglewindow",
-		lanedetectconstants::kcommonanglewindow, 60.0, 150.0, 0.05*increment) );
-	
-	//Finally, weighting
-	laneconstants.push_back( LaneConstant( "kcenteredweight",
-		lanedetectconstants::kcenteredweight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kwidthweight",
-		lanedetectconstants::kwidthweight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestpointweight",
-		lanedetectconstants::klowestpointweight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kangleweight",
-		lanedetectconstants::kangleweight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kellipseratioweight",
-		lanedetectconstants::kellipseratioweight, 0.0, 10.0, 0.05*increment) );
-	
+		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klowestscorelimit",
+		lanedetectconstants::klowestscorelimit, 10.0, 80.0, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
@@ -230,16 +202,14 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 	for ( LaneConstant &l : laneconstants) {
 		if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
-		} else if (l.variablename_ == "ksegmentanglewindow" ) {
-			lanedetectconstants::ksegmentanglewindow = l.value_;
 		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {
 			lanedetectconstants::ksegmentlengthwidthratio = l.value_;
-		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
-			lanedetectconstants::ksegmentsanglewindow = l.value_;
+		} else if (l.variablename_ == "ksegmentminimumangle" ) {
+			lanedetectconstants::ksegmentminimumangle = l.value_;
 		} else if (l.variablename_ == "kellipseheight" ) {
 			lanedetectconstants::kellipseheight = l.value_;
-		} else if (l.variablename_ == "kanglewindow" ) {
-			lanedetectconstants::kanglewindow = l.value_;
+		} else if (l.variablename_ == "kminimumangle" ) {
+			lanedetectconstants::kminimumangle = l.value_;
 		} else if (l.variablename_ == "klengthwidthratio" ) {
 			lanedetectconstants::klengthwidthratio = l.value_;
 		} else if (l.variablename_ == "kcommonanglewindow" ) {
@@ -258,6 +228,10 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::kcenteredweight = l.value_;
 		} else if (l.variablename_ == "kwidthweight" ) {
 			lanedetectconstants::kwidthweight = l.value_;
+		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
+			lanedetectconstants::ksegmentsanglewindow = l.value_;
+		} else if (l.variablename_ == "klowestscorelimit" ) {
+			lanedetectconstants::klowestscorelimit = l.value_;
 		} else if (l.variablename_ == "klowestpointweight" ) {
 			lanedetectconstants::klowestpointweight = l.value_;
 		} else {
