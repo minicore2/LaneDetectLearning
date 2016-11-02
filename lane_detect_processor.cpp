@@ -33,7 +33,7 @@ namespace lanedetectconstants {
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400), cv::Point(540,400),
-		cv::Point(340,250), cv::Point(300,250) };
+		cv::Point(340,250), cv::Point(300,250) };	//In terms of pixels, future change
 	uint16_t koptimumwidth{ static_cast<uint16_t>(optimalpolygon[1].x -
 		optimalpolygon[0].x) };
 	uint16_t kroadwithtolerance{ 80 };
@@ -41,18 +41,18 @@ namespace lanedetectconstants {
     uint16_t kmaxroadwidth{ static_cast<uint16_t>(koptimumwidth + kroadwithtolerance) };
 	
 	//Segment filtering
-	uint16_t ksegmentellipseheight{ 5 };	//In terms of pixels, change for flexibility
+	uint16_t ksegmentellipseheight{ 10 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
-	float ksegmentminimumangle{ 10.0f };
-	float ksegmentlengthwidthratio{ 1.2f };
+	float ksegmentminimumangle{ 23.1f };
+	float ksegmentlengthwidthratio{ 1.85f };
 	
 	//Contour construction filter
-	float ksegmentsanglewindow{ 45.0f };
+	float ksegmentsanglewindow{ 42.0f };
 	
 	//Contour filtering
-	uint16_t kellipseheight{ 10 };			//In terms of pixels, change for flexibility
-	float kminimumangle{ 15.0f };
-	float klengthwidthratio{ 3.00f };
+	uint16_t kellipseheight{ 17 };					//In terms of pixels, future change
+	float kminimumangle{ 16.9f };
+	float klengthwidthratio{ 4.05f };
 	
 	//Scoring
 	float klowestscorelimit{ 15.0f };
@@ -89,7 +89,6 @@ void ProcessImage ( cv::Mat& image,
 	//Canny edge detection
     cv::Canny(modifiedimage, modifiedimage, 40, 120, 3 );
     //cv::Canny(modifiedimage, modifiedimage, otsuthreshval * 0.5, otsuthreshval );
-	//cv::cvtColor( modifiedimage, cannymodifiedimage, CV_GRAY2BGR );
 	std::vector<Contour> detectedcontours;
     std::vector<cv::Vec4i> detectedhierarchy;
     cv::findContours( modifiedimage, detectedcontours, detectedhierarchy,
