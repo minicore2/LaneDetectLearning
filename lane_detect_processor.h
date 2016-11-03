@@ -34,19 +34,8 @@ void FindPolygon( Polygon& polygon,
                   const Contour& leftcontour,
 				  const Contour& rightcontour,
 				  bool useoptimaly = false );
-float ScoreContourPair( const Polygon& polygon,
-                         const int imagewidth,
-						 const int imageheight,
-						 const EvaluatedContour& leftcontour,
-						 const EvaluatedContour& rightcontour );
 float PercentMatch( const Polygon& polygon,
 					const cv::Mat& optimalmat );
-float PercentMatch2( const Polygon& polygon,
-					 const cv::Mat& optimalmat,
-					 const uint16_t optimalarea );
-float PercentMatch3( const Polygon& polygon,
-					 const Polygon& optimalpolygon,
-					 const uint16_t optimalarea );
 int32_t ScorePolygonByPoint( const Polygon& polygon,
 							 const Polygon& optimalpolygon );
 void AveragePolygon( Polygon& polygon,

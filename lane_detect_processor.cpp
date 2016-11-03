@@ -30,13 +30,15 @@
 #define POLYGONSCALING 0.1
 
 namespace lanedetectconstants {
+	//Image evaluation
+	uint16_t lowercannythreshold{ 40 };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400), cv::Point(540,400),
 		cv::Point(340,250), cv::Point(300,250) };	//In terms of pixels, future change
 	uint16_t koptimumwidth{ static_cast<uint16_t>(optimalpolygon[1].x -
 		optimalpolygon[0].x) };
-	uint16_t kroadwithtolerance{ 80 };
+	uint16_t kroadwithtolerance{ 100 };
     uint16_t kminroadwidth{ static_cast<uint16_t>(koptimumwidth - kroadwithtolerance) };
     uint16_t kmaxroadwidth{ static_cast<uint16_t>(koptimumwidth + kroadwithtolerance) };
 	
@@ -44,26 +46,19 @@ namespace lanedetectconstants {
 	uint16_t ksegmentellipseheight{ 10 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
 	float ksegmentminimumangle{ 23.1f };
-	float ksegmentlengthwidthratio{ 1.85f };
+	float ksegmentlengthwidthratio{ 2.0f };
 	
 	//Contour construction filter
-	float ksegmentsanglewindow{ 42.0f };
+	float ksegmentsanglewindow{ 40.0f };
 	
 	//Contour filtering
 	uint16_t kellipseheight{ 17 };					//In terms of pixels, future change
 	float kminimumangle{ 16.9f };
-	float klengthwidthratio{ 4.05f };
+	float klengthwidthratio{ 4.5f };
 	
 	//Scoring
 	float klowestscorelimit{ 15.0f };
-	
-	//Only effective when scoring contour pairs (to be removed)
-    float kcommonanglewindow{ 45.0f };
-	float kellipseratioweight{ 1.3f };
-	float kangleweight{ -2.2f };
-	float kcenteredweight{ -1.0f };
-	float kwidthweight{ -3.0f};
-	float klowestpointweight{ -2.0f };
+
 }
 
 //Main function
@@ -87,7 +82,8 @@ void ProcessImage ( cv::Mat& image,
     //double otsuthreshval = cv::threshold( modifiedimage, modifiedimage, 0, 255,
 	//	CV_THRESH_BINARY | CV_THRESH_OTSU );
 	//Canny edge detection
-    cv::Canny(modifiedimage, modifiedimage, 40, 120, 3 );
+    cv::Canny(modifiedimage, modifiedimage, lanedetectconstants::lowercannythreshold, 3 *
+		lanedetectconstants::lowercannythreshold);
     //cv::Canny(modifiedimage, modifiedimage, otsuthreshval * 0.5, otsuthreshval );
 	std::vector<Contour> detectedcontours;
     std::vector<cv::Vec4i> detectedhierarchy;
@@ -102,21 +98,22 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------
 //Evaluate contours
 //-----------------------------------------------------------------------------------------	
-	std::vector<EvaluatedContour> evaluatedchildsegments;
+	//std::vector<EvaluatedContour> evaluatedchildsegments;
 	std::vector<EvaluatedContour> evaluatedparentsegments; 
     for ( int i = 0; i < detectedcontours.size(); i++ ) {
-        if ( detectedhierarchy[i][3] > -1 ) {
-			EvaluateSegment( detectedcontours[i], image.rows, evaluatedchildsegments );
-        } else {
+        //if ( detectedhierarchy[i][3] > -1 ) {
+		//	EvaluateSegment( detectedcontours[i], image.rows, evaluatedchildsegments );
+        //} else {
 			EvaluateSegment( detectedcontours[i], image.rows, evaluatedparentsegments );
-		}
+		//}
     }
 
 //-----------------------------------------------------------------------------------------
 //Construct from segments
 //-----------------------------------------------------------------------------------------	
     std::vector<std::vector<cv::Point>> constructedcontours;
-	ConstructFromSegments( evaluatedchildsegments, constructedcontours );
+	//ConstructFromSegments( evaluatedchildsegments, constructedcontours );
+	ConstructFromSegments( evaluatedparentsegments, constructedcontours );
 	//for (int i = 0; i < constructedcontours.size(); i++){
 	//	drawContours(image, constructedcontours, i, cv::Scalar(255,255,0), 1, 8);
  	//}
@@ -169,9 +166,7 @@ void ProcessImage ( cv::Mat& image,
 			//If invalid polygon created, goto next
 			if ( newpolygon[0] == cv::Point(0,0) ) continue;
 			
-			//Score is area matched, multiplied by h/d (favors tall vs wide polygons)
-			//float score{ ((newpolygon[0].y - newpolygon[3].y)/(newpolygon[2].x -
-			//	newpolygon[3].x)) * PercentMatch(newpolygon, optimalmat) };
+			//Score
 			float score{ PercentMatch(newpolygon, optimalmat) };
 			
 			//If highest score update
@@ -214,7 +209,6 @@ void EvaluateSegment( const Contour& contour,
 	
 	//Filter by length (ellipse vs segment?)
 	if ( ellipse.size.height < lanedetectconstants::ksegmentellipseheight ) return;
-	//if ( arcLength(contour, false) < lanedetectconstants::ksegmentlength ) return;
 	
 	//Calculate length to width ratio
 	float lengthwidthratio{ ellipse.size.height / ellipse.size.width };
@@ -290,12 +284,12 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 		if ( evaluatedcontour.ellipse.center.x < (imagewidth * 0.5f) ) {
 			//Filter by angle
 			if ( evaluatedcontour.angle < lanedetectconstants::kminimumangle ) return;
-			if ( evaluatedcontour.angle > 100.0f ) return;
+			if ( evaluatedcontour.angle < 75.0f ) return;
 			leftcontours.push_back( evaluatedcontour );
 		} else {
 			//Filter by angle
 			if ( evaluatedcontour.angle > (180.0f - lanedetectconstants::kminimumangle) ) return;
-			if ( evaluatedcontour.angle < 80.0f ) return;
+			if ( evaluatedcontour.angle > 105.0f ) return;
 			rightcontours.push_back( evaluatedcontour );
 		}
 	}
@@ -308,12 +302,6 @@ void FindPolygon( Polygon& polygon,
 				  const Contour& rightcontour,
 				  bool useoptimaly )
 {
-	//Check for valid contours to prevent exception
-	/*
-	if ( leftcontour.empty() || rightcontour.empty() ) {
-        return;
-    }*/
-	
 	//Get point extremes
 	auto minmaxyleft = std::minmax_element(leftcontour.begin(), leftcontour.end(),
 		[]( const cv::Point& lhs, const cv::Point& rhs ) { return lhs.y < rhs.y; });
@@ -394,31 +382,6 @@ void FindPolygon( Polygon& polygon,
 }
 
 /*****************************************************************************************/
-float ScoreContourPair( const Polygon& polygon,
-                        const int imagewidth,
-						const int imageheight,
-						const EvaluatedContour& leftcontour,
-						const EvaluatedContour& rightcontour )
-{
-	//Filter by common angle
-	float deviationangle{ 180.0f - leftcontour.angle -	rightcontour.angle };
-	if ( fabs(deviationangle) > lanedetectconstants::kcommonanglewindow ) return (-FLT_MAX);
-	
-	//Calculate score
-	float weightedscore{ 0.0f };
-	weightedscore += lanedetectconstants::kellipseratioweight * (
-		leftcontour.lengthwidthratio + rightcontour.lengthwidthratio);
-	weightedscore += lanedetectconstants::kangleweight * fabs(deviationangle);
-	weightedscore += lanedetectconstants::kcenteredweight * (
-		fabs(imagewidth - polygon[0].x - polygon[1].x));
-	weightedscore += lanedetectconstants::kwidthweight * (
-		fabs(lanedetectconstants::koptimumwidth -(polygon[1].x - polygon[0].x)));
-	weightedscore += lanedetectconstants::klowestpointweight * (
-		imageheight - polygon[0].y);
-	return weightedscore;
-}
-
-/*****************************************************************************************/
 float PercentMatch( const Polygon& polygon,
 					const cv::Mat& optimalmat )
 {
@@ -458,111 +421,6 @@ float PercentMatch( const Polygon& polygon,
 	}
 
 	return (100.0f * overlaparea) / (overlaparea + excessarea);
-}
-
-/*****************************************************************************************/
-float PercentMatch2( const Polygon& polygon,
-					 const cv::Mat& optimalmat,
-					 const uint16_t optimalarea )
-{
-	//Create blank mat
-	cv::Mat polygonmat{ cv::Mat(optimalmat.rows, optimalmat.cols, CV_8UC1, cv::Scalar(0)) };
-	
-	//Draw polygon
-	cv::Point cvpointarray[4];
-	for  (int i =0; i < 4; i++ ) {
-		cvpointarray[i] = cv::Point(POLYGONSCALING * polygon[i].x, POLYGONSCALING *
-			polygon[i].y);
-	}
-	cv::fillConvexPoly( polygonmat, cvpointarray, 4,  cv::Scalar(2) );
-
-	//Find area
-	uint16_t a( cvpointarray[2].x - cvpointarray[3].x );
-	uint16_t b( cvpointarray[1].x - cvpointarray[0].x );
-	uint16_t h( cvpointarray[0].y - cvpointarray[2].y );
-	uint16_t polygonarea( 0.5f * (a + b) * h );
-	
-	//Add together
-	cv::bitwise_and(polygonmat, optimalmat, polygonmat);
-	uint16_t overlaparea { static_cast<uint16_t>(countNonZero(polygonmat)) };
-
-	return (100.0 * overlaparea) / (optimalarea + polygonarea - overlaparea);
-}
-
-/*****************************************************************************************/
-float PercentMatch3( const Polygon& polygon,
-					 const Polygon& optimalpolygon,
-					 const uint16_t optimalarea )
-{
-	//Find area
-	uint16_t a( polygon[2].x - polygon[3].x );
-	uint16_t b( polygon[1].x - polygon[0].x );
-	uint16_t h( polygon[0].y - polygon[2].y );
-	uint16_t polygonarea( static_cast<uint16_t>(0.5f * (a + b) * h) );
-	
-	//Create overlap polygon
-	Polygon overlappolygon { cv::Point(0,0), cv::Point(0,0), cv::Point(0,0),
-		cv::Point(0,0) };
-	//Point 0
-	if ( optimalpolygon[0].x > polygon[0].x ) {
-		overlappolygon[0].x = optimalpolygon[0].x;
-	} else {
-		overlappolygon[0].x = polygon[0].x;
-	}
-	if ( optimalpolygon[0].y < polygon[0].y ) {
-		overlappolygon[0].y = optimalpolygon[0].y;
-		overlappolygon[1].y = optimalpolygon[0].y;
-	} else {
-		overlappolygon[0].y = polygon[0].y;
-		overlappolygon[1].y = polygon[0].y;
-	}
-	//Point 1
-	if ( optimalpolygon[1].x < polygon[1].x ) {
-		overlappolygon[1].x = optimalpolygon[1].x;
-	} else {
-		overlappolygon[1].x = polygon[1].x;
-	}
-	//Point 2
-	if ( optimalpolygon[2].x < polygon[2].x ) {
-		overlappolygon[2].x = optimalpolygon[2].x;
-	} else {
-		overlappolygon[2].x = polygon[2].x;
-	}
-	if ( optimalpolygon[2].y > polygon[2].y ) {
-		overlappolygon[2].y = optimalpolygon[2].y;
-		overlappolygon[3].y = optimalpolygon[2].y;
-	} else {
-		overlappolygon[2].y = polygon[2].y;
-		overlappolygon[3].y = polygon[2].y;
-	}
-	//Point 3
-	if ( optimalpolygon[3].x > polygon[3].x ) {
-		overlappolygon[3].x = optimalpolygon[3].x;
-	} else {
-		overlappolygon[3].x = polygon[3].x;
-	}
-		
-	
-	//Find area
-	uint16_t aovr( overlappolygon[2].x - overlappolygon[3].x );
-	uint16_t bovr( overlappolygon[1].x - overlappolygon[0].x );
-	uint16_t hovr( overlappolygon[0].y - overlappolygon[2].y );
-	uint16_t overlaparea( static_cast<uint16_t>(0.5f * (aovr + bovr) * hovr) );
-
-	return (100.0 * overlaparea) / (optimalarea + polygonarea - overlaparea);
-}
-
-/*****************************************************************************************/
-int32_t ScorePolygonByPoint( const Polygon& polygon,
-							 const Polygon& optimalpolygon )
-{
-	int32_t score {0};
-	for (int i = 0; i < 4; i++) {
-		cv::Point diff { polygon[i] - optimalpolygon[i] };
-		//The literal multiplied by y is to emphasise focus on x
-		score -= FastSquareRoot((diff.x * diff.x) + 0.75 * (diff.y * diff.y));
-	}
-	return score;
 }
 
 /*****************************************************************************************/
@@ -661,8 +519,8 @@ float FastArcTan2( const float y,
 	//Calculate
 	float a( std::min(fabs(x),fabs(y)) / std::max(fabs(x),fabs(y)) );
 	float s{ a * a };
-	float angle{ (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s
-		* a + a) };
+	float angle( (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s
+		* a + a) );
 	if (fabs(y) > fabs(x)) angle = M_PI_2 - angle;
 	if (x < 0) angle = M_PI - angle;
 	if (y < 0) angle *= -1.0;

@@ -212,28 +212,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::kminimumangle = l.value_;
 		} else if (l.variablename_ == "klengthwidthratio" ) {
 			lanedetectconstants::klengthwidthratio = l.value_;
-		} else if (l.variablename_ == "kcommonanglewindow" ) {
-			lanedetectconstants::kcommonanglewindow = l.value_;
 		} else if (l.variablename_ == "kminroadwidth" ) {
 			lanedetectconstants::kminroadwidth = l.value_;
 		} else if (l.variablename_ == "kmaxroadwidth" ) {
 			lanedetectconstants::kmaxroadwidth = l.value_;
 		} else if (l.variablename_ == "koptimumwidth" ) {
 			lanedetectconstants::koptimumwidth = l.value_;
-		} else if (l.variablename_ == "kellipseratioweight" ) {
-			lanedetectconstants::kellipseratioweight = l.value_;
-		} else if (l.variablename_ == "kangleweight" ) {
-			lanedetectconstants::kangleweight = l.value_;
-		} else if (l.variablename_ == "kcenteredweight" ) {
-			lanedetectconstants::kcenteredweight = l.value_;
-		} else if (l.variablename_ == "kwidthweight" ) {
-			lanedetectconstants::kwidthweight = l.value_;
 		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
 			lanedetectconstants::ksegmentsanglewindow = l.value_;
 		} else if (l.variablename_ == "klowestscorelimit" ) {
 			lanedetectconstants::klowestscorelimit = l.value_;
-		} else if (l.variablename_ == "klowestpointweight" ) {
-			lanedetectconstants::klowestpointweight = l.value_;
 		} else {
 			std::cout << "Programming error, variable does not exist!" << std::endl;
 			std::cin.get();
