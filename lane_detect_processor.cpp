@@ -98,22 +98,22 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------
 //Evaluate contours
 //-----------------------------------------------------------------------------------------	
-	//std::vector<EvaluatedContour> evaluatedchildsegments;
+	std::vector<EvaluatedContour> evaluatedchildsegments;
 	std::vector<EvaluatedContour> evaluatedparentsegments; 
     for ( int i = 0; i < detectedcontours.size(); i++ ) {
-        //if ( detectedhierarchy[i][3] > -1 ) {
-		//	EvaluateSegment( detectedcontours[i], image.rows, evaluatedchildsegments );
-        //} else {
+        if ( detectedhierarchy[i][3] > -1 ) {
+			EvaluateSegment( detectedcontours[i], image.rows, evaluatedchildsegments );
+        } else {
 			EvaluateSegment( detectedcontours[i], image.rows, evaluatedparentsegments );
-		//}
+		}
     }
 
 //-----------------------------------------------------------------------------------------
 //Construct from segments
 //-----------------------------------------------------------------------------------------	
     std::vector<std::vector<cv::Point>> constructedcontours;
-	//ConstructFromSegments( evaluatedchildsegments, constructedcontours );
-	ConstructFromSegments( evaluatedparentsegments, constructedcontours );
+	ConstructFromSegments( evaluatedchildsegments, constructedcontours );
+	//ConstructFromSegments( evaluatedparentsegments, constructedcontours );
 	//for (int i = 0; i < constructedcontours.size(); i++){
 	//	drawContours(image, constructedcontours, i, cv::Scalar(255,255,0), 1, 8);
  	//}
@@ -133,8 +133,8 @@ void ProcessImage ( cv::Mat& image,
 	std::vector<EvaluatedContour> leftcontours;
 	std::vector<EvaluatedContour> rightcontours;
 	SortContours( evaluatedparentsegments, image.cols, leftcontours, rightcontours );
-	//std::cout << "Left pairs: " << leftcontours.size() << std::endl;
 	//SortContours( evaluatedchildsegments, image.cols, leftcontours, rightcontours );
+	//std::cout << "Left pairs: " << leftcontours.size() << std::endl;
 	//std::cout << "Right pairs: " << rightcontours.size() << std::endl;
 	
 //-----------------------------------------------------------------------------------------
