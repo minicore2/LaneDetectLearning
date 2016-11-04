@@ -45,18 +45,19 @@ namespace lanedetectconstants {
 	//Segment filtering
 	uint16_t ksegmentellipseheight{ 10 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
-	float ksegmentminimumangle{ 23.1f };
-	float ksegmentlengthwidthratio{ 2.0f };
+	float ksegmentminimumangle{ 23.75f };
+	float ksegmentlengthwidthratio{ 2.3f };
 	
 	//Contour construction filter
-	float ksegmentsanglewindow{ 40.0f };
+	float ksegmentsanglewindow{ 42.0f };
 	
 	//Contour filtering
-	uint16_t kellipseheight{ 17 };					//In terms of pixels, future change
-	float kminimumangle{ 16.9f };
-	float klengthwidthratio{ 4.5f };
+	uint16_t kellipseheight{ 19 };					//In terms of pixels, future change
+	float kminimumangle{ 25.0f };
+	float klengthwidthratio{ 4.85f };
 	
 	//Scoring
+	float kanglefromcenter{ 35.0f };
 	float klowestscorelimit{ 15.0f };
 
 }
@@ -69,25 +70,24 @@ void ProcessImage ( cv::Mat& image,
 //Image manipulation
 //-----------------------------------------------------------------------------------------
 	//Change to grayscale
-	cv::Mat modifiedimage;
-	cv::cvtColor( image, modifiedimage, CV_BGR2GRAY );
+	cv::cvtColor( image, image, CV_BGR2GRAY );
 	
 	//Blur to reduce noise
-    cv::blur( modifiedimage, modifiedimage, cv::Size(3,3) );
+    cv::blur( image, image, cv::Size(3,3) );
 	
 //-----------------------------------------------------------------------------------------
 //Find contours
 //-----------------------------------------------------------------------------------------
 	//Auto threshold values for canny edge detection
-    //double otsuthreshval = cv::threshold( modifiedimage, modifiedimage, 0, 255,
+    //double otsuthreshval = cv::threshold( image, image, 0, 255,
 	//	CV_THRESH_BINARY | CV_THRESH_OTSU );
 	//Canny edge detection
-    cv::Canny(modifiedimage, modifiedimage, lanedetectconstants::lowercannythreshold, 3 *
+    cv::Canny(image, image, lanedetectconstants::lowercannythreshold, 3 *
 		lanedetectconstants::lowercannythreshold);
-    //cv::Canny(modifiedimage, modifiedimage, otsuthreshval * 0.5, otsuthreshval );
+    //cv::Canny(image, image, otsuthreshval * 0.5, otsuthreshval );
 	std::vector<Contour> detectedcontours;
     std::vector<cv::Vec4i> detectedhierarchy;
-    cv::findContours( modifiedimage, detectedcontours, detectedhierarchy,
+    cv::findContours( image, detectedcontours, detectedhierarchy,
 		CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
 	//std::cout << "Contours found: " << detectedcontours.size() << std::endl;
 	//Contours removed by position in function
@@ -158,6 +158,10 @@ void ProcessImage ( cv::Mat& image,
 	//Find best score
 	for ( EvaluatedContour &leftevaluatedontour : leftcontours ) {
 		for ( EvaluatedContour &rightevaluatedcontour : rightcontours ) {
+			//Check sum angle
+			if ((fabs(180.0f - leftevaluatedontour.angle + rightevaluatedcontour.angle) * 0.5f) >
+				lanedetectconstants::kanglefromcenter);
+			
 			Polygon newpolygon{ cv::Point(0,0), cv::Point(0,0), cv::Point(0,0),
 				cv::Point(0,0) };
 			FindPolygon( newpolygon, leftevaluatedontour.contour,
@@ -532,4 +536,3 @@ float FastArcTan2( const float y,
 	//return
 	return angle;
 }
-  

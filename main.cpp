@@ -86,13 +86,13 @@ int main(int argc,char *argv[])
 	laneconstants.push_back( LaneConstant( "kellipseheight",
 		lanedetectconstants::kellipseheight, 10.0, 50.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kminimumangle",
-		lanedetectconstants::kminimumangle, 5.0, 30.0, 0.05*increment) );
+		lanedetectconstants::kminimumangle, 20.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
 		lanedetectconstants::klengthwidthratio, 1.0, 15.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
 		lanedetectconstants::ksegmentellipseheight, 0.0, 10.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentminimumangle",
-		lanedetectconstants::ksegmentminimumangle, 5.0, 30.0, 0.05*increment) );
+		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
