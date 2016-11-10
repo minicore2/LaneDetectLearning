@@ -83,6 +83,8 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
+	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
+		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
 		lanedetectconstants::kellipseheight, 10.0, 50.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kminimumangle",
@@ -95,8 +97,6 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
-		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "klowestscorelimit",
 		lanedetectconstants::klowestscorelimit, 10.0, 80.0, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;

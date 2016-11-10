@@ -45,16 +45,16 @@ namespace lanedetectconstants {
 	//Segment filtering
 	uint16_t ksegmentellipseheight{ 10 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
-	float ksegmentminimumangle{ 23.75f };
-	float ksegmentlengthwidthratio{ 2.3f };
+	float ksegmentminimumangle{ 26.0f };
+	float ksegmentlengthwidthratio{ 2.4f };
 	
 	//Contour construction filter
-	float ksegmentsanglewindow{ 42.0f };
+	float ksegmentsanglewindow{ 41.0f };
 	
 	//Contour filtering
-	uint16_t kellipseheight{ 19 };					//In terms of pixels, future change
+	uint16_t kellipseheight{ 25 };					//In terms of pixels, future change
 	float kminimumangle{ 25.0f };
-	float klengthwidthratio{ 4.85f };
+	float klengthwidthratio{ 5.55f };
 	
 	//Scoring
 	float kanglefromcenter{ 35.0f };
@@ -298,12 +298,12 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 		//Push into either left or right evaluated contour set
 		if ( evaluatedcontour.ellipse.center.x < (imagewidth * 0.5f) ) {
 			//Filter by angle
-			if ( evaluatedcontour.angle < lanedetectconstants::kminimumangle ) return;
+			if ( evaluatedcontour.angle > (180.0f - lanedetectconstants::kminimumangle) ) return;
 			if ( evaluatedcontour.angle < 75.0f ) return;
 			leftcontours.push_back( evaluatedcontour );
 		} else {
 			//Filter by angle
-			if ( evaluatedcontour.angle > (180.0f - lanedetectconstants::kminimumangle) ) return;
+			if ( evaluatedcontour.angle > lanedetectconstants::kminimumangle) return;
 			if ( evaluatedcontour.angle > 105.0f ) return;
 			rightcontours.push_back( evaluatedcontour );
 		}
