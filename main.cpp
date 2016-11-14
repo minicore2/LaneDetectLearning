@@ -45,7 +45,10 @@
 
 //Forward declations
 void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants);
-void FrameLoaderThread(cv::VideoCapture* videocapture, std::mutex* framesmutex, std::queue<cv::Mat>* frames, std::atomic<bool>* done);
+void FrameLoaderThread( cv::VideoCapture* videocapture,
+						std::mutex* framesmutex,
+						std::queue<cv::Mat>* frames,
+						std::atomic<bool>* done);
 int main(int argc,char *argv[])
 {
 	//Check arguments passed
@@ -83,8 +86,8 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
-	laneconstants.push_back( LaneConstant( "lowercannythreshold",
-		lanedetectconstants::lowercannythreshold, 20.0, 80.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kotsuscalefactor",
+		lanedetectconstants::kotsuscalefactor, 0.1, 0.4, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -161,7 +164,8 @@ int main(int argc,char *argv[])
 					resultvalues.Push( polygon );
 					frameschecked++;
 					if (frameschecked%messagecount == 0) {
-						std::cout << "Iteration " << iterationcount << ", file " << j << ", ";
+						std::cout << "Iteration " << iterationcount << ", file "
+								  << j << ", ";
 						std::cout << std::fixed << std::setprecision(0);
 						std::cout << ((100.0*framecount)/capture.get(cv::CAP_PROP_FRAME_COUNT));
 						std::cout << "% file, " << ((100.0*frameschecked)/totalframes);
@@ -201,8 +205,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 {
 	
 	for ( LaneConstant &l : laneconstants) {
-		if (l.variablename_ == "lowercannythreshold" ) {
-			lanedetectconstants::lowercannythreshold = l.value_;
+		if (l.variablename_ == "kotsuscalefactor" ) {
+			lanedetectconstants::kotsuscalefactor = l.value_;
 		} else if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
 		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {
