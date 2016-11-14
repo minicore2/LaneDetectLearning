@@ -83,6 +83,8 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
+	laneconstants.push_back( LaneConstant( "lowercannythreshold",
+		lanedetectconstants::lowercannythreshold, 5.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -200,7 +202,9 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 {
 	
 	for ( LaneConstant &l : laneconstants) {
-		if (l.variablename_ == "ksegmentellipseheight" ) {
+		if (l.variablename_ == "lowercannythreshold" ) {
+			lanedetectconstants::lowercannythreshold = l.value_;
+		} else if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
 		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {
 			lanedetectconstants::ksegmentlengthwidthratio = l.value_;
