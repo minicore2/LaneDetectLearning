@@ -84,7 +84,7 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	laneconstants.push_back( LaneConstant( "lowercannythreshold",
-		lanedetectconstants::lowercannythreshold, 5.0, 80.0, 0.05*increment) );
+		lanedetectconstants::lowercannythreshold, 20.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -108,7 +108,7 @@ int main(int argc,char *argv[])
 	for( int i = 0; i < laneconstants.size(); i++ ) {
 		resultsfile << laneconstants[i].variablename_ << ",";
 	}
-	resultsfile << "standard deviation" << ",";
+	resultsfile << "average match" << ",";
 	resultsfile << "frames detected" << "," << "total frames" << "," << "score" << ",";
 	resultsfile << "runtime" << "," << "fps" << "," << std::endl;
 
@@ -170,7 +170,6 @@ int main(int argc,char *argv[])
 					}
 				}
 				capture.release();
-				resultvalues.NewPattern();
 			}
 			
 			//Update
@@ -178,10 +177,10 @@ int main(int argc,char *argv[])
 			double runtime{std::chrono::duration_cast<std::chrono::microseconds>
 				(std::chrono::high_resolution_clock::now() - starttime).count()/1000000.0};
 			double fps{totalframes/runtime};
-			resultsfile << resultvalues.polygondev_ << ",";
+			resultsfile << resultvalues.averagematch_ << ",";
 			resultsfile << resultvalues.detectedframes_ << "," << totalframes << ",";
 			resultsfile << resultvalues.outputscore_ << ",";
-			resultsfile << std::fixed << std::setprecision(2) << runtime << ",";
+			resultsfile << std::fixed << std::setprecision(3) << runtime << ",";
 			resultsfile << fps << "," << std::endl;
 			if (laneconstants[i].finished_) break;
 		}

@@ -10,14 +10,14 @@ class ResultValues
 {
 	public:
 		ResultValues( uint32_t totalframes );
-		void NewPattern();
 		void Push(Polygon polygon);
 		void Update( LaneConstant& laneconstant );
 		void NewIteration();
 		void NewVariable();
-		double polygondev_;
+		double averagematch_;
 		double outputscore_;
 		uint32_t detectedframes_;
+		cv::Mat optimalmat_;
 
 	protected:
 
@@ -27,8 +27,7 @@ class ResultValues
 		bool firstpass_;
 		double lanedetectmultiplier_;
 		uint32_t totalframes_;
-		std::deque<Polygon> polygonqueue_;
-		std::deque<double> polygondevqueue_;
+		std::deque<float> matchqueue_;
 };
 
 #endif // RESULTVALUES_H

@@ -31,7 +31,7 @@
 
 namespace lanedetectconstants {
 	//Image evaluation
-	uint16_t lowercannythreshold{ 40 };
+	uint16_t lowercannythreshold{ 38 };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400),
@@ -51,7 +51,7 @@ namespace lanedetectconstants {
 	float ksegmentlengthwidthratio{ 2.4f };
 	
 	//Contour construction filter
-	float ksegmentsanglewindow{ 37.0f };
+	float ksegmentsanglewindow{ 34.0f };
 	
 	//Contour filtering
 	uint16_t kellipseheight{ 25 };					//In terms of pixels, future change
