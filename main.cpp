@@ -86,6 +86,8 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
+	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
+		lanedetectconstants::kheightwidthscalefactor, 0.1, 0.4, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kotsuscalefactor",
 		lanedetectconstants::kotsuscalefactor, 0.1, 0.4, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
@@ -205,7 +207,9 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 {
 	
 	for ( LaneConstant &l : laneconstants) {
-		if (l.variablename_ == "kotsuscalefactor" ) {
+		if (l.variablename_ == "kheightwidthscalefactor" ) {
+			lanedetectconstants::kheightwidthscalefactor = l.value_;
+		} else if (l.variablename_ == "kotsuscalefactor" ) {
 			lanedetectconstants::kotsuscalefactor = l.value_;
 		} else if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
