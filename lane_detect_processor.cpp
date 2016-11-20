@@ -15,23 +15,23 @@
 
 //Preprocessor literals
 #ifndef M_PI
-    #define M_PI 3.14159265359
+    #define M_PI 3.14159265359f
 #endif
 #ifndef M_PI_2
-    #define M_PI_2 1.57079632679
+    #define M_PI_2 1.57079632679f
 #endif
 #ifndef M_PI_4
-    #define M_PI_4 0.78539816339
+    #define M_PI_4 0.78539816339f
 #endif
 #ifndef M_1_PI
-	#define M_1_PI 0.31830988618
+	#define M_1_PI 0.31830988618f
 #endif
-#define DEGREESPERRADIAN 57.2957795131
-#define POLYGONSCALING 0.1
+#define DEGREESPERRADIAN 57.2957795131f
+#define POLYGONSCALING 0.1f
 
 namespace lanedetectconstants {
 	//Image evaluation
-	float kotsuscalefactor{ 0.25f };
+	float kotsuscalefactor{ 0.218f };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400),
@@ -47,20 +47,20 @@ namespace lanedetectconstants {
 	//Segment filtering
 	uint16_t ksegmentellipseheight{ 10 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
-	float ksegmentminimumangle{ 26.0f };
-	float ksegmentlengthwidthratio{ 2.4f };
+	float ksegmentminimumangle{ 20.0f };
+	float ksegmentlengthwidthratio{ 2.6f };
 	
 	//Contour construction filter
 	float ksegmentsanglewindow{ 34.0f };
 	
 	//Contour filtering
-	uint16_t kellipseheight{ 25 };					//In terms of pixels, future change
+	uint16_t kellipseheight{ 20 };					//In terms of pixels, future change
 	float kminimumangle{ 25.0f };
-	float klengthwidthratio{ 5.55f };
+	float klengthwidthratio{ 4.0f };
 	
 	//Scoring
 	float kanglefromcenter{ 30.0f };
-	float klowestscorelimit{ 10.0f };
+	float klowestscorelimit{ 28.0f };
 
 }
 
@@ -88,8 +88,11 @@ void ProcessImage ( cv::Mat& image,
     cv::Canny( image, image, lowerthreshold, 3 * lowerthreshold );
 	std::vector<Contour> detectedcontours;
     std::vector<cv::Vec4i> detectedhierarchy;
-    cv::findContours( image, detectedcontours, detectedhierarchy,
-					  CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+    cv::findContours( image,
+					  detectedcontours,
+					  detectedhierarchy,
+					  CV_RETR_CCOMP,
+					  CV_CHAIN_APPROX_SIMPLE );
 		
 //-----------------------------------------------------------------------------------------
 //Evaluate contours
@@ -144,8 +147,9 @@ void ProcessImage ( cv::Mat& image,
 	cv::Point cvpointarray[4];
 	for  (int i =0; i < 4; i++ ) {
 		cvpointarray[i] = cv::Point(POLYGONSCALING *
-						  lanedetectconstants::optimalpolygon[i].x,
-						  POLYGONSCALING * lanedetectconstants::optimalpolygon[i].y);
+									lanedetectconstants::optimalpolygon[i].x,
+									POLYGONSCALING *
+									lanedetectconstants::optimalpolygon[i].y);
 	}
 	cv::fillConvexPoly( optimalmat, cvpointarray, 4,  cv::Scalar(1) );
 	
@@ -433,11 +437,11 @@ float PercentMatch( const Polygon& polygon,
 	polygonmat += optimalmat;
 	
 	//Evaluate result
-	uint16_t excessarea{ 0 };
-	uint16_t overlaparea{ 0 };
-	for ( int i = 0; i < optimalmat.rows; i++ ) {
+	uint32_t excessarea{ 0 };
+	uint32_t overlaparea{ 0 };
+	for ( int i = 0; i < polygonmat.rows; i++ ) {
 		uchar* p { polygonmat.ptr<uchar>(i) };
-		for ( int j = 0; j < optimalmat.cols; j++ ) {
+		for ( int j = 0; j < polygonmat.cols; j++ ) {
 			switch ( p[j] )
 			{
 				case 1:
@@ -452,7 +456,6 @@ float PercentMatch( const Polygon& polygon,
 			}
 		}
 	}
-
 	return (100.0f * overlaparea) / (overlaparea + excessarea);
 }
 
