@@ -154,10 +154,10 @@ void ProcessImage ( cv::Mat& image,
 	cv::fillConvexPoly( optimalmat, cvpointarray, 4,  cv::Scalar(1) );
 	
 	//Find best score
-	for ( EvaluatedContour &leftevaluatedontour : leftcontours ) {
+	for ( EvaluatedContour &leftevaluatedcontour : leftcontours ) {
 		for ( EvaluatedContour &rightevaluatedcontour : rightcontours ) {
 			//Check sum angle
-			if ( (fabs(180.0f - leftevaluatedontour.angle - rightevaluatedcontour.angle) *
+			if ( (fabs(180.0f - leftevaluatedcontour.angle - rightevaluatedcontour.angle) *
 				  0.5f) > lanedetectconstants::kanglefromcenter ) continue;
 			
 			Polygon newpolygon{ cv::Point(0,0),
@@ -165,18 +165,22 @@ void ProcessImage ( cv::Mat& image,
 								cv::Point(0,0),
 								cv::Point(0,0) };
 			FindPolygon( newpolygon,
-						 leftevaluatedontour.contour,
+						 leftevaluatedcontour.contour,
 						 rightevaluatedcontour.contour );
 				
 			//If invalid polygon created, goto next
 			if ( newpolygon[0] == cv::Point(0,0) ) continue;
 			
 			//Score
-			float score{ PercentMatch(newpolygon, optimalmat) };
+			//float score{ PercentMatch(newpolygon, optimalmat) };
+			float score{ Score(newpolygon,
+							   image.cols,
+							   leftevaluatedcontour,
+							   rightevaluatedcontour) };
 			
 			//If highest score update
 			if ( score > maxscore ) {
-				leftcontour = leftevaluatedontour.contour;
+				leftcontour = leftevaluatedcontour.contour;
 				rightcontour = rightevaluatedcontour.contour;
 				maxscore = score;
 				bestpolygon = newpolygon;
@@ -417,10 +421,15 @@ void FindPolygon( Polygon& polygon,
 }
 
 /*****************************************************************************************/
-float Score( const Polygon& polygon )
+float Score( const Polygon& polygon ,
+			 const int imagewidth,
+			 const EvaluatedContour& leftcontour,
+			 const EvaluatedContour& rightcontour )
 {
-	return static_cast<float>(polygon[0].y - polygon[2].y) /
-		   static_cast<float>(polygon[1].y - polygon[0].y);
+	
+	float heightwidthratio{ static_cast<float>(polygon[0].y - polygon[3].y) /
+							static_cast<float>(polygon[1].y - polygon[0].y) };
+	float centeroffset{ fabs((imagewidth - (polygon[0].x + polygon[1].x)) * 0.5f) };
 }
 
 /*****************************************************************************************/
