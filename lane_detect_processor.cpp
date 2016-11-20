@@ -300,17 +300,18 @@ void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
 			continue;
 		
 		//Push into either left or right evaluated contour set
-		if ( evaluatedcontour.ellipse.center.x < (imagewidth * 0.5f) ) {
+		if ( evaluatedcontour.ellipse.center.x < (imagewidth * 0.6f) ) {
 			//Filter by angle
 			if ( evaluatedcontour.angle > (180.0f - lanedetectconstants::kminimumangle) ) {
-				return;
+				continue;
 			}
-			if ( evaluatedcontour.angle < 75.0f ) return;
+			if ( evaluatedcontour.angle < 75.0f ) continue;
 			leftcontours.push_back( evaluatedcontour );
-		} else {
+		} 
+		if ( evaluatedcontour.ellipse.center.x > (imagewidth * 0.4f) ) {
 			//Filter by angle
-			if ( evaluatedcontour.angle < lanedetectconstants::kminimumangle) return;
-			if ( evaluatedcontour.angle > 105.0f ) return;
+			if ( evaluatedcontour.angle < lanedetectconstants::kminimumangle) continue;
+			if ( evaluatedcontour.angle > 105.0f ) continue;
 			rightcontours.push_back( evaluatedcontour );
 		}
 	}
@@ -413,6 +414,13 @@ void FindPolygon( Polygon& polygon,
 	}
 
 	return;
+}
+
+/*****************************************************************************************/
+float Score( const Polygon& polygon )
+{
+	return static_cast<float>(polygon[0].y - polygon[2].y) /
+		   static_cast<float>(polygon[1].y - polygon[0].y);
 }
 
 /*****************************************************************************************/
