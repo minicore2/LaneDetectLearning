@@ -5,7 +5,7 @@
 #include "lane_detect_processor.h"
 #include "lane_constant_class.h"
 
-#define POLYGONSCALING 0.1
+#define POLYGONSCALING 1.0f
 
 double Average( std::deque<float> &values )
 {
@@ -77,12 +77,17 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	
 	//Score
 	averagematch_ = Average(matchqueue_);
-	if ( firstpass_ ) { 	//Adjust detected frame multiplier to bring inital score to 0!
+	if ( firstpass_ ) {
+		//Hardcoded now to tip balance to good average match
+		lanedetectmultiplier_ = 0.5;
+		/*
+		//Adjust detected frame multiplier to bring inital score to 0!
 		lanedetectmultiplier_ = averagematch_ * (static_cast<double>(totalframes_)
 			/ static_cast<double>(detectedframes_));
 		firstpass_ = false;
+		*/
 	}
-	score_= (lanedetectmultiplier_ * detectedframes_)/totalframes_ - averagematch_;
+	score_= (lanedetectmultiplier_ * detectedframes_)/totalframes_ + averagematch_;
 	outputscore_ = score_;
 
 

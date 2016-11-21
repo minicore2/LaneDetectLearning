@@ -87,9 +87,9 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
-		lanedetectconstants::kheightwidthscalefactor, 0.1, 0.4, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kotsuscalefactor",
-		lanedetectconstants::kotsuscalefactor, 0.1, 0.4, 0.05*increment) );
+		lanedetectconstants::kheightwidthscalefactor, 1.0, 200.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
+		lanedetectconstants::kcontrastscalefactor, 0.1, 0.4, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -104,8 +104,6 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestscorelimit",
-		lanedetectconstants::klowestscorelimit, 10.0, 80.0, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
@@ -209,8 +207,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 	for ( LaneConstant &l : laneconstants) {
 		if (l.variablename_ == "kheightwidthscalefactor" ) {
 			lanedetectconstants::kheightwidthscalefactor = l.value_;
-		} else if (l.variablename_ == "kotsuscalefactor" ) {
-			lanedetectconstants::kotsuscalefactor = l.value_;
+		} else if (l.variablename_ == "kcontrastscalefactor" ) {
+			lanedetectconstants::kcontrastscalefactor = l.value_;
 		} else if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
 		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {

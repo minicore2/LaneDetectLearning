@@ -27,11 +27,11 @@
 	#define M_1_PI 0.31830988618f
 #endif
 #define DEGREESPERRADIAN 57.2957795131f
-#define POLYGONSCALING 0.1f
+#define POLYGONSCALING 1.0f
 
 namespace lanedetectconstants {
 	//Image evaluation
-	float kotsuscalefactor{ 0.218f };
+	float kcontrastscalefactor{ 0.114f };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400),
@@ -60,8 +60,8 @@ namespace lanedetectconstants {
 	
 	//Scoring
 	float kanglefromcenter{ 30.0f };
-	float klowestscorelimit{ 28.0f };
-	float kheightwidthscalefactor{ 50.0f };
+	float klowestscorelimit{ -FLT_MAX };
+	float kheightwidthscalefactor{ 1.0f };
 
 }
 
@@ -82,9 +82,10 @@ void ProcessImage ( cv::Mat& image,
 //Find contours
 //-----------------------------------------------------------------------------------------
 	//Auto threshold values for canny edge detection
-	cv::Scalar averageintensity = cv::mean( image );
-	float lowerthreshold{ lanedetectconstants::kotsuscalefactor *
-						  averageintensity.val[0] };
+	double minintensity, maxintensity;
+	cv::minMaxLoc(image, &minintensity, &maxintensity);
+	float lowerthreshold{ lanedetectconstants::kcontrastscalefactor *
+						  (maxintensity - minintensity) };
 	//Canny edge detection
     cv::Canny( image, image, lowerthreshold, 3 * lowerthreshold );
 	std::vector<Contour> detectedcontours;
@@ -429,7 +430,7 @@ float Score( const Polygon& polygon ,
 {
 	
 	float heightwidthratio{ static_cast<float>(polygon[0].y - polygon[3].y) /
-							static_cast<float>(polygon[1].y - polygon[0].y) };
+							static_cast<float>(polygon[1].x - polygon[0].x) };
 	float centeroffset{ fabs((imagewidth - (polygon[0].x + polygon[1].x)) * 0.5f) };
 	
 	return lanedetectconstants::kheightwidthscalefactor * heightwidthratio - centeroffset;
