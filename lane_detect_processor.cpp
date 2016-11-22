@@ -1,3 +1,16 @@
+/******************************************************************************************
+  Date:    12.08.2016
+  Author:  Nathan Greco (Nathan.Greco@gmail.com)
+
+  Project:
+      DAPrototype: Driver Assist Prototype
+	  http://github.com/NateGreco/DAPrototype.git
+
+  License:
+	  This software is licensed under GNU GPL v3.0
+	  
+******************************************************************************************/
+
 //standard libraries
 #include <iostream>
 #include <ctime>
@@ -31,7 +44,7 @@
 
 namespace lanedetectconstants {
 	//Image evaluation
-	float kcontrastscalefactor{ 0.114f };
+	float kcontrastscalefactor{ 0.18f };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(100,400),
@@ -61,7 +74,7 @@ namespace lanedetectconstants {
 	//Scoring
 	float kanglefromcenter{ 30.0f };
 	float klowestscorelimit{ -FLT_MAX };
-	float kheightwidthscalefactor{ 1.0f };
+	float kheightwidthscalefactor{ 200.0f };
 
 }
 
@@ -76,16 +89,16 @@ void ProcessImage ( cv::Mat& image,
 	cv::cvtColor( image, image, CV_BGR2GRAY );
 	
 	//Blur to reduce noise
-    cv::blur( image, image, cv::Size(3,3) );
+    cv::blur( image, image, cv::Size(2,2) );
 	
 //-----------------------------------------------------------------------------------------
 //Find contours
 //-----------------------------------------------------------------------------------------
-	//Auto threshold values for canny edge detection
+	//Auto threshold values for canny edge detection - should use stddev instead?
 	double minintensity, maxintensity;
 	cv::minMaxLoc(image, &minintensity, &maxintensity);
 	float lowerthreshold{ lanedetectconstants::kcontrastscalefactor *
-						  (maxintensity - minintensity) };
+						  static_cast<float>(maxintensity - minintensity) };
 	//Canny edge detection
     cv::Canny( image, image, lowerthreshold, 3 * lowerthreshold );
 	std::vector<Contour> detectedcontours;
@@ -175,10 +188,7 @@ void ProcessImage ( cv::Mat& image,
 			
 			//Score
 			//float score{ PercentMatch(newpolygon, optimalmat) };
-			float score{ Score(newpolygon,
-							   image.cols,
-							   leftevaluatedcontour,
-							   rightevaluatedcontour) };
+			float score{ Score(newpolygon, image.cols) };
 			
 			//If highest score update
 			if ( score > maxscore ) {
@@ -424,9 +434,7 @@ void FindPolygon( Polygon& polygon,
 
 /*****************************************************************************************/
 float Score( const Polygon& polygon ,
-			 const int imagewidth,
-			 const EvaluatedContour& leftcontour,
-			 const EvaluatedContour& rightcontour )
+			 const int imagewidth )
 {
 	
 	float heightwidthratio{ static_cast<float>(polygon[0].y - polygon[3].y) /

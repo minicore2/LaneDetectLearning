@@ -87,9 +87,9 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
-		lanedetectconstants::kheightwidthscalefactor, 1.0, 200.0, 0.05*increment) );
+		lanedetectconstants::kheightwidthscalefactor, 200.0, 400.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
-		lanedetectconstants::kcontrastscalefactor, 0.1, 0.4, 0.05*increment) );
+		lanedetectconstants::kcontrastscalefactor, 0.12, 0.2, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -112,8 +112,8 @@ int main(int argc,char *argv[])
 		resultsfile << laneconstants[i].variablename_ << ",";
 	}
 	resultsfile << "average match" << ",";
-	resultsfile << "frames detected" << "," << "total frames" << "," << "score" << ",";
-	resultsfile << "runtime" << "," << "fps" << "," << std::endl;
+	resultsfile << "frames detected" << "," << "total frames" << "," << "percent detected";
+	resultsfile << "," << "score" << "," << "runtime" << "," << "fps" << "," << std::endl;
 
 	
 	//Create resultsfile vector
@@ -183,6 +183,8 @@ int main(int argc,char *argv[])
 			double fps{totalframes/runtime};
 			resultsfile << resultvalues.averagematch_ << ",";
 			resultsfile << resultvalues.detectedframes_ << "," << totalframes << ",";
+			resultsfile << std::fixed << std::setprecision(2);
+			resultsfile << ((resultvalues.detectedframes_ * 100.0) / totalframes) << ",";
 			resultsfile << resultvalues.outputscore_ << ",";
 			resultsfile << std::fixed << std::setprecision(3) << runtime << ",";
 			resultsfile << fps << "," << std::endl;
