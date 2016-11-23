@@ -43,6 +43,7 @@
 #include "lane_constant_class.h"
 #include "result_values_class.h"
 
+/*****************************************************************************************/
 //Forward declations
 void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants);
 void FrameLoaderThread( cv::VideoCapture* videocapture,
@@ -84,12 +85,14 @@ int main(int argc,char *argv[])
 	uint32_t messagecount{totalframes/100};	//Every 1%
 
 	//Create variable classes
-	double increment{0.5};
+	double increment{1.0};
 	std::vector<LaneConstant> laneconstants;
-	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
-		lanedetectconstants::kheightwidthscalefactor, 200.0, 400.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
-		lanedetectconstants::kcontrastscalefactor, 0.12, 0.2, 0.05*increment) );
+	/*
+	*/
+	laneconstants.push_back( LaneConstant( "kanglefromcenter",
+		lanedetectconstants::kanglefromcenter, 5.0, 45.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klowestscorelimit",
+		lanedetectconstants::klowestscorelimit, -50.0, 50.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -104,7 +107,11 @@ int main(int argc,char *argv[])
 		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
+		lanedetectconstants::kheightwidthscalefactor, 200.0, 600.0, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
+	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
+		lanedetectconstants::kcontrastscalefactor, 0.16, 0.2, 0.05*increment) );
 	
 	//Create header of resultsfile file
 	resultsfile << "Iteration" << ",";
@@ -211,6 +218,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::kheightwidthscalefactor = l.value_;
 		} else if (l.variablename_ == "kcontrastscalefactor" ) {
 			lanedetectconstants::kcontrastscalefactor = l.value_;
+		} else if (l.variablename_ == "kanglefromcenter" ) {
+			lanedetectconstants::kanglefromcenter = l.value_;
 		} else if (l.variablename_ == "ksegmentellipseheight" ) {
 			lanedetectconstants::ksegmentellipseheight = l.value_;
 		} else if (l.variablename_ == "ksegmentlengthwidthratio" ) {

@@ -79,7 +79,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	averagematch_ = Average(matchqueue_);
 	if ( firstpass_ ) {
 		//Hardcoded now to tip balance to good average match
-		lanedetectmultiplier_ = 0.5;
+		lanedetectmultiplier_ = 0.35;
 		/*
 		//Adjust detected frame multiplier to bring inital score to 0!
 		lanedetectmultiplier_ = averagematch_ * (static_cast<double>(totalframes_)
@@ -87,7 +87,8 @@ void ResultValues::Update(LaneConstant& laneconstant)
 		firstpass_ = false;
 		*/
 	}
-	score_= (lanedetectmultiplier_ * detectedframes_)/totalframes_ + averagematch_;
+	score_= lanedetectmultiplier_ * ((100.0 * detectedframes_) / (1.0 * totalframes_)) +
+			(1.0 - lanedetectmultiplier_) * averagematch_;
 	outputscore_ = score_;
 
 
