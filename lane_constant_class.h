@@ -28,6 +28,7 @@ class LaneConstant
 		double range_;
 		double bestscore_;
 		double bestvalue_;
+		double initialvalue_;
 		void SetPrevious();
 		double previousvalue_;
 		bool hitlimit_;

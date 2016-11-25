@@ -91,7 +91,16 @@ void ResultValues::Update(LaneConstant& laneconstant)
 			(1.0 - lanedetectmultiplier_) * averagematch_;
 	outputscore_ = score_;
 
-
+	//Temporary code just to iterate through span of all variables
+	/*
+	if ( laneconstant.hitlimit_ ) {
+			laneconstant.finished_ = true;	
+			laneconstant.value_ = laneconstant.initialvalue_;
+			return;
+	} else {
+		laneconstant.Modify();
+	}
+	*/
 	//Figure it out
 	if ( laneconstant.hitlimit_ ) {
 		if ( (laneconstant.reversedcount_ == 0) && (score_ == previousscore_ )) {
@@ -121,6 +130,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 			score_ = previousscore_;
 		}
 	}
+	
 	previousscore_ = score_;
 	if ( laneconstant.finished_ ) return;
 	laneconstant.Modify();

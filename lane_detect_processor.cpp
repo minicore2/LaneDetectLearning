@@ -45,7 +45,7 @@
 /*****************************************************************************************/
 namespace lanedetectconstants {
 	//Image evaluation
-	float kcontrastscalefactor{ 0.195f };
+	float kcontrastscalefactor{ 0.188f };
 	
 	//Polygon filtering
 	Polygon optimalpolygon{ cv::Point(110,480),
@@ -59,24 +59,24 @@ namespace lanedetectconstants {
     uint16_t kmaxroadwidth{ static_cast<uint16_t>(koptimumwidth + kroadwithtolerance) };
 	
 	//Segment filtering
-	uint16_t ksegmentellipseheight{ 8 };			//In terms of pixels, future change
+	uint16_t ksegmentellipseheight{ 16 };			//In terms of pixels, future change
 	uint16_t kverticalsegmentlimit{ static_cast<uint16_t>(optimalpolygon[2].y) };
-	float ksegmentminimumangle{ 20.0f };
-	float ksegmentlengthwidthratio{ 2.0f };
+	float ksegmentminimumangle{ 26.0f };
+	float ksegmentlengthwidthratio{ 4.0f };
 	
 	//Contour construction filter
 	float ksegmentsanglewindow{ 34.0f };
 	
 	//Contour filtering
-	uint16_t kellipseheight{ 20 };					//In terms of pixels, future change
-	float kminimumangle{ 25.0f };
-	float klengthwidthratio{ 4.7f };
+	uint16_t kellipseheight{ 24 };					//In terms of pixels, future change
+	float kminimumangle{ 26.0f };
+	float klengthwidthratio{ 6.5f };
 	
 	//Scoring
 	float kanglefromcenter{ 26.0f };
-	uint16_t kminimumpolygonheight{ 25 };
-	float klowestscorelimit{ -FLT_MAX };		//{ -40.0f };
-	float kheightwidthscalefactor{ 400.0f };
+	uint16_t kminimumpolygonheight{ 40 };
+	float klowestscorelimit{ -50.0f };
+	float kheightwidthscalefactor{ 500.0f };
 
 }
 
