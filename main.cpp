@@ -87,12 +87,13 @@ int main(int argc,char *argv[])
 	//Create variable classes
 	double increment{1.0};
 	std::vector<LaneConstant> laneconstants;
-	/*
-	*/
-	laneconstants.push_back( LaneConstant( "kanglefromcenter",
-		lanedetectconstants::kanglefromcenter, 5.0, 45.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestscorelimit",
-		lanedetectconstants::klowestscorelimit, -50.0, 50.0, 0.05*increment) );
+	//Sort by sequence in code!
+	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
+		lanedetectconstants::ksegmentellipseheight, 0.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
+		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "ksegmentminimumangle",
+		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentsanglewindow",
 		lanedetectconstants::ksegmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kellipseheight",
@@ -101,17 +102,17 @@ int main(int argc,char *argv[])
 		lanedetectconstants::kminimumangle, 20.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "klengthwidthratio",
 		lanedetectconstants::klengthwidthratio, 1.0, 15.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
-		lanedetectconstants::ksegmentellipseheight, 0.0, 10.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "ksegmentminimumangle",
-		lanedetectconstants::ksegmentminimumangle, 15.0, 45.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
-		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 3.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kanglefromcenter",
+		lanedetectconstants::kanglefromcenter, 5.0, 45.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
+		lanedetectconstants::kminimumpolygonheight, 0.16, 0.2, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
 		lanedetectconstants::kheightwidthscalefactor, 200.0, 600.0, 0.05*increment) );
-	std::cout << laneconstants.size() << " variables to modify" << std::endl;
+	laneconstants.push_back( LaneConstant( "klowestscorelimit",
+		lanedetectconstants::klowestscorelimit, -50.0, 50.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
 		lanedetectconstants::kcontrastscalefactor, 0.16, 0.2, 0.05*increment) );
+	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
 	resultsfile << "Iteration" << ",";
@@ -240,6 +241,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::koptimumwidth = l.value_;
 		} else if (l.variablename_ == "ksegmentsanglewindow" ) {
 			lanedetectconstants::ksegmentsanglewindow = l.value_;
+		} else if (l.variablename_ == "kminimumpolygonheight" ) {
+			lanedetectconstants::kminimumpolygonheight = l.value_;
 		} else if (l.variablename_ == "klowestscorelimit" ) {
 			lanedetectconstants::klowestscorelimit = l.value_;
 		} else {
