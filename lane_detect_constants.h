@@ -1,11 +1,27 @@
+/******************************************************************************************
+  Date:    12.08.2016
+  Author:  Nathan Greco (Nathan.Greco@gmail.com)
+
+  Project:
+      DAPrototype: Driver Assist Prototype
+	  http://github.com/NateGreco/DAPrototype.git
+
+  License:
+	  This software is licensed under GNU GPL v3.0
+	  
+******************************************************************************************/
+
+//Header guard
 #ifndef LANEDETECTCONSTANTS_H
 #define LANEDETECTCONSTANTS_H
 
+//Project libraries
 #include "lane_detect_processor.h"
 
+/*****************************************************************************************/
 namespace lanedetectconstants {
 	//Image evaluation
-	extern float kcontrastscalefactor;
+	extern float kotsuscalefactor;
 	
 	//Polygon filtering
 	extern Polygon optimalpolygon;
@@ -28,6 +44,7 @@ namespace lanedetectconstants {
 	
 	//Scoring
 	extern float kanglefromcenter;
+	extern uint16_t kminimumpolygonheight;
 	extern float klowestscorelimit;
 	extern float kheightwidthscalefactor;
 	
