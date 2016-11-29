@@ -3,6 +3,7 @@
 #include "opencv2/opencv.hpp"
 #include "result_values_class.h"
 #include "lane_detect_processor.h"
+#include "lane_detect_constants.h"
 #include "lane_constant_class.h"
 
 #define POLYGONSCALING 1.0f
@@ -31,14 +32,10 @@ ResultValues::ResultValues( uint32_t totalframes ):
 										CV_8UC1,
 										cv::Scalar(0)}
 {
-	Polygon optimalpolygon{ cv::Point(100,400),
-							cv::Point(540,400),
-							cv::Point(340,250),
-							cv::Point(300,250) };
 	cv::Point cvpointarray[4];
 	for  (int i =0; i < 4; i++ ) {
-		cvpointarray[i] = cv::Point( POLYGONSCALING * optimalpolygon[i].x,
-									 POLYGONSCALING * optimalpolygon[i].y);
+		cvpointarray[i] = cv::Point( POLYGONSCALING * lanedetectconstants::optimalpolygon[i].x,
+									 POLYGONSCALING * lanedetectconstants::optimalpolygon[i].y);
 	}
 	cv::fillConvexPoly( optimalmat_, cvpointarray, 4,  cv::Scalar(1) );
 }
@@ -90,9 +87,8 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	score_= lanedetectmultiplier_ * ((100.0 * detectedframes_) / (1.0 * totalframes_)) +
 			(1.0 - lanedetectmultiplier_) * averagematch_;
 	outputscore_ = score_;
-
-	//Temporary code just to iterate through span of all variables
 	/*
+	//Temporary code just to iterate through span of all variables
 	if ( laneconstant.hitlimit_ ) {
 			laneconstant.finished_ = true;	
 			laneconstant.value_ = laneconstant.initialvalue_;
@@ -101,6 +97,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 		laneconstant.Modify();
 	}
 	*/
+
 	//Figure it out
 	if ( laneconstant.hitlimit_ ) {
 		if ( (laneconstant.reversedcount_ == 0) && (score_ == previousscore_ )) {
@@ -130,10 +127,10 @@ void ResultValues::Update(LaneConstant& laneconstant)
 			score_ = previousscore_;
 		}
 	}
-	
+
 	previousscore_ = score_;
 	if ( laneconstant.finished_ ) return;
 	laneconstant.Modify();
-	
+
 	return;
 }
