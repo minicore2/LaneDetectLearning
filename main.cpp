@@ -88,6 +88,12 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
+	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
+		lanedetectconstants::kcontrastscalefactor, 0.300, 0.450, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klowestscorelimit",
+		lanedetectconstants::klowestscorelimit, -200.0, 200.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
+		lanedetectconstants::kminimumpolygonheight, 5, 50, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
 		lanedetectconstants::ksegmentellipseheight, 0.0, 20.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
@@ -106,12 +112,6 @@ int main(int argc,char *argv[])
 		lanedetectconstants::kanglefromcenter, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
 		lanedetectconstants::kheightwidthscalefactor, 400.0, 600.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
-		lanedetectconstants::kminimumpolygonheight, 10, 80, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestscorelimit",
-		lanedetectconstants::klowestscorelimit, -100.0, 100.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
-		lanedetectconstants::kcontrastscalefactor, 0.400, 0.500, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
