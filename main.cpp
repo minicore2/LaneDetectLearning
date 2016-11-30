@@ -88,16 +88,8 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
-	//laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
-	//	lanedetectconstants::kcontrastscalefactor, 0.450, 0.550, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
-		lanedetectconstants::kheightwidthscalefactor, 400.0, 1000.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
-		lanedetectconstants::kminimumpolygonheight, 0, 60, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentellipseheight",
 		lanedetectconstants::ksegmentellipseheight, 0.0, 20.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "klowestscorelimit",
-		lanedetectconstants::klowestscorelimit, -100.0, 100.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentlengthwidthratio",
 		lanedetectconstants::ksegmentlengthwidthratio, 1.0, 5.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "ksegmentminimumangle",
@@ -112,8 +104,14 @@ int main(int argc,char *argv[])
 		lanedetectconstants::klengthwidthratio, 3.0, 15.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "kanglefromcenter",
 		lanedetectconstants::kanglefromcenter, 5.0, 45.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
-	//	lanedetectconstants::kminimumpolygonheight, 10, 60, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kheightwidthscalefactor",
+		lanedetectconstants::kheightwidthscalefactor, 400.0, 600.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kminimumpolygonheight",
+		lanedetectconstants::kminimumpolygonheight, 10, 80, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "klowestscorelimit",
+		lanedetectconstants::klowestscorelimit, -100.0, 100.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "kcontrastscalefactor",
+		lanedetectconstants::kcontrastscalefactor, 0.400, 0.500, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
