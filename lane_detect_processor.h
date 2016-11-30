@@ -1,28 +1,10 @@
-/******************************************************************************************
-  Date:    12.08.2016
-  Author:  Nathan Greco (Nathan.Greco@gmail.com)
-
-  Project:
-      DAPrototype: Driver Assist Prototype
-	  http://github.com/NateGreco/DAPrototype.git
-
-  License:
-	  This software is licensed under GNU GPL v3.0
-	  
-******************************************************************************************/
-
-//Header guard
 #ifndef LANEDETECTPROCESSOR_H
 #define LANEDETECTPROCESSOR_H
 
-//Standard libraries
 #include <deque>
 #include <array>
-
-//3rd party libraries
 #include "opencv2/opencv.hpp"
 
-/*****************************************************************************************/
 typedef std::array<cv::Point, 4> Polygon;
 typedef std::vector<cv::Point> Contour;
 
@@ -32,6 +14,7 @@ struct EvaluatedContour {
     float lengthwidthratio;
 	float angle;
     cv::Vec4f fitline;
+	cv::Point center;
 };
 
 struct PolygonDifferences {
@@ -40,8 +23,7 @@ struct PolygonDifferences {
 };
 
 void EvaluateSegment( const Contour& contour,
-					  const int imageheight,
-	                  std::vector<EvaluatedContour>&	evaluatedsegments );
+	                  std::vector<EvaluatedContour>& evaluatedsegments );
 void ConstructFromSegments( const std::vector<EvaluatedContour>& evaluatedsegments,
                             std::vector<Contour>& constructedcontours );
 void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
