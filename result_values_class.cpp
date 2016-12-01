@@ -6,8 +6,6 @@
 #include "lane_detect_constants.h"
 #include "lane_constant_class.h"
 
-#define POLYGONSCALING 1.0f
-
 double Average( std::deque<float> &values )
 {
 	double value{0.0};
@@ -19,6 +17,49 @@ double Average( std::deque<float> &values )
 	return value;
 }
 
+/*****************************************************************************************/
+float PercentMatch( const Polygon& polygon,
+					const cv::Mat& optimalmat )
+{
+	//Create blank mat
+	cv::Mat polygonmat{ cv::Mat(optimalmat.rows,
+								optimalmat.cols,
+								CV_8UC1,
+								cv::Scalar(0)) };
+	
+	//Draw polygon
+	cv::Point cvpointarray[4];
+	for  (int i =0; i < 4; i++ ) {
+		cvpointarray[i] = polygon[i];
+	}
+	cv::fillConvexPoly( polygonmat, cvpointarray, 4,  cv::Scalar(2) );
+
+	//Add together
+	polygonmat += optimalmat;
+	
+	//Evaluate result
+	uint32_t excessarea{ 0 };
+	uint32_t overlaparea{ 0 };
+	for ( int i = 0; i < polygonmat.rows; i++ ) {
+		uchar* p { polygonmat.ptr<uchar>(i) };
+		for ( int j = 0; j < polygonmat.cols; j++ ) {
+			switch ( p[j] )
+			{
+				case 1:
+					excessarea++;
+					break;
+				case 2:
+					excessarea++;
+					break;
+				case 3:
+					overlaparea++;
+					break;
+			}
+		}
+	}
+	return (100.0f * overlaparea) / (overlaparea + excessarea);
+}
+
 ResultValues::ResultValues( uint32_t totalframes ):
 							totalframes_{totalframes},
 							detectedframes_{0},
@@ -27,15 +68,18 @@ ResultValues::ResultValues( uint32_t totalframes ):
 							averagematch_{0.0},
 							lanedetectmultiplier_{0.0},
 							firstpass_{true},
-							optimalmat_{static_cast<int>(POLYGONSCALING * 480),
-										static_cast<int>(POLYGONSCALING * 640),
+							optimalmat_{480,
+										800,
 										CV_8UC1,
 										cv::Scalar(0)}
 {
 	cv::Point cvpointarray[4];
+	Polygon optimalpolygon{ cv::Point(110,480),
+							cv::Point(690,480),
+							cv::Point(390,250),
+							cv::Point(410,250) };
 	for  (int i =0; i < 4; i++ ) {
-		cvpointarray[i] = cv::Point( POLYGONSCALING * lanedetectconstants::optimalpolygon[i].x,
-									 POLYGONSCALING * lanedetectconstants::optimalpolygon[i].y);
+		cvpointarray[i] = optimalpolygon[i];
 	}
 	cv::fillConvexPoly( optimalmat_, cvpointarray, 4,  cv::Scalar(1) );
 }
@@ -87,8 +131,9 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	score_= lanedetectmultiplier_ * ((100.0 * detectedframes_) / (1.0 * totalframes_)) +
 			(1.0 - lanedetectmultiplier_) * averagematch_;
 	outputscore_ = score_;
-	/*
+
 	//Temporary code just to iterate through span of all variables
+/*
 	if ( laneconstant.hitlimit_ ) {
 			laneconstant.finished_ = true;	
 			laneconstant.value_ = laneconstant.initialvalue_;
@@ -96,8 +141,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	} else {
 		laneconstant.Modify();
 	}
-	*/
-
+*/
 	//Figure it out
 	if ( laneconstant.hitlimit_ ) {
 		if ( (laneconstant.reversedcount_ == 0) && (score_ == previousscore_ )) {
@@ -131,6 +175,6 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	previousscore_ = score_;
 	if ( laneconstant.finished_ ) return;
 	laneconstant.Modify();
-
+	
 	return;
 }
