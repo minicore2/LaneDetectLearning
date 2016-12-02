@@ -24,14 +24,10 @@
 
 /*****************************************************************************************/
 typedef std::array<cv::Point, 4> Polygon;
-typedef std::vector<cv::Point> Contour;
 
-struct EvaluatedContour {
-    Contour contour;
-    //cv::RotatedRect ellipse;
-    //float lengthwidthratio;
+struct EvaluatedLine {
+    cv::Vec4i line;
 	float angle;
-    cv::Vec4f fitline;
 	cv::Point center;
 };
 
@@ -40,22 +36,20 @@ struct PolygonDifferences {
 	float differencefromaverage;
 };
 
-void EvaluateSegment( const Contour& contour,
-	                  std::vector<EvaluatedContour>& evaluatedsegments );
-void ConstructFromSegments( const std::vector<EvaluatedContour>& evaluatedsegments,
-                            std::vector<Contour>& constructedcontours );
-void SortContours( const std::vector<EvaluatedContour>& evaluatedsegments,
+void EvaluateLine( const cv::Vec4i line,
+	                  std::vector<EvaluatedLine>& evaluatedsegments );
+void SortLines( const std::vector<EvaluatedLine>& evaluatedsegments,
 				   const int imagewidth,
-				   std::vector<EvaluatedContour>& leftcontours,
-				   std::vector<EvaluatedContour>& rightcontours );
+				   std::vector<EvaluatedLine>& leftlines,
+				   std::vector<EvaluatedLine>& rightlines );
 void FindPolygon( Polygon& polygon,
-                  const EvaluatedContour& leftevaluatedcontour,
-				  const EvaluatedContour& rightevaluatedcontour,
+                  const EvaluatedLine& leftevaluatedline,
+				  const EvaluatedLine& rightevaluatedline,
                   const int imageheight,
 				  bool useoptimaly = false );
 float Score( const Polygon& polygon,
-             const EvaluatedContour& leftevaluatedcontour,
-			 const EvaluatedContour& rightevaluatedcontour,
+             const EvaluatedLine& leftevaluatedline,
+			 const EvaluatedLine& rightevaluatedline,
 			 const int imagewidth );
 void AveragePolygon( Polygon& polygon,
 					 std::deque<Polygon>& pastpolygons,

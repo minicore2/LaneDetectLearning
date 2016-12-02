@@ -24,17 +24,11 @@ namespace lanedetectconstants {
 	//Image evaluation
 	extern float k_contrastscalefactor;
 	
-	//Segment filtering
-	extern uint16_t k_segmentminimumsize;
+	//Line filtering
 	extern uint16_t k_verticalsegmentlimit;
-	extern float k_segmentminimumangle;
-	//extern float k_segmentlengthwidthratio;
-	extern float k_segmentsanglewindow;
-	
-	//Contour filtering
 	extern uint16_t k_minimumsize;
+	extern uint16_t k_maxlinegap;
 	extern float k_minimumangle;
-	extern float k_lengthwidthratio;
 	
 	//Polygon filtering
     extern uint16_t k_minroadwidth;
