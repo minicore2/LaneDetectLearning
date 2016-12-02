@@ -85,13 +85,15 @@ int main(int argc,char *argv[])
 	uint32_t messagecount{totalframes/100};	//Every 1%
 
 	//Create variable classes
-	double increment{1.0};
+	double increment{2.0};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
-	laneconstants.push_back( LaneConstant( "k_minimumsize",
-		lanedetectconstants::k_minimumsize, 40.0, 100.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_minimumsize",
+	//	lanedetectconstants::k_minimumsize, 40.0, 200.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_threshold",
+	//	lanedetectconstants::k_threshold, 80.0, 200.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_maxlinegap",
-		lanedetectconstants::k_maxlinegap, 5.0, 15.0, -0.05*increment) );
+		lanedetectconstants::k_maxlinegap, 1.0, 10.0, 0.05*increment) );
 	//laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
 	//	lanedetectconstants::k_weightedcenteroffset,-10.0, -1.0, -0.05*increment) );
 	//laneconstants.push_back( LaneConstant( "k_weightedheightwidth",
@@ -241,14 +243,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::k_maxroadwidth = l.value_;
 //		} else if (l.variablename_ == "k_segmentsanglewindow" ) {
 //			lanedetectconstants::k_segmentsanglewindow = l.value_;
-		} else if (l.variablename_ == "k_minimumpolygonheight" ) {
-			lanedetectconstants::k_minimumpolygonheight = l.value_;
+//		} else if (l.variablename_ == "k_minimumpolygonheight" ) {
+//			lanedetectconstants::k_minimumpolygonheight = l.value_;
 //		} else if (l.variablename_ == "k_segmentminimumsize" ) {
 //			lanedetectconstants::k_segmentminimumsize = l.value_;
 		} else if (l.variablename_ == "k_weightedcenteroffset" ) {
 			lanedetectconstants::k_weightedcenteroffset = l.value_;
 		} else if (l.variablename_ == "k_weightedangleoffset" ) {
 			lanedetectconstants::k_weightedangleoffset = l.value_;
+		} else if (l.variablename_ == "k_threshold" ) {
+			lanedetectconstants::k_threshold = l.value_;
 		} else if (l.variablename_ == "k_maxlinegap" ) {
 			lanedetectconstants::k_maxlinegap = l.value_;
 		} else if (l.variablename_ == "k_lowestscorelimit" ) {

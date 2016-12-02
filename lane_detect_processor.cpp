@@ -44,25 +44,22 @@
 /*****************************************************************************************/
 namespace lanedetectconstants {
 	//Image evaluation
-	float k_contrastscalefactor{ 0.35f };
+	float k_contrastscalefactor{ 0.5f };
 	
 	//Line filtering
-	uint16_t k_verticalsegmentlimit{ 250 };			//Relative to image size, must change
-	uint16_t k_minimumsize{ 40 };					//Relative to image size, must change
-	uint16_t k_maxlinegap{ 5 };					//Relative to image size, must change
+	uint16_t k_verticallimit{ 250 };				//Relative to image size, must change
+	uint16_t k_minimumsize{ 50 };					//Relative to image size, must change
+	uint16_t k_maxlinegap{ 6 };						//Relative to image size, must change
+	uint16_t k_threshold{ 80 };						//Relative to image size, must change
 	float k_minimumangle{ 24.0f };
-	
-	//Line construction filter
-	float k_segmentsanglewindow{ 34.0f };
-	
+
 	//Polygon filtering
     uint16_t k_minroadwidth{ 500 };					//Relative to image size, must change
     uint16_t k_maxroadwidth{ 660 };					//Relative to image size, must change
 	
 	//Scoring
 	float k_anglefromcenter{ 26.0f };
-	uint16_t k_minimumpolygonheight{ 12 };			//Relative to image size, must change
-	float k_lowestscorelimit{ -400.0f };			//Relative to image size, must change
+	float k_lowestscorelimit{ -50.0f };				//Relative to image size, must change
 	float k_weightedheightwidth{ 100.0f };			//Relative to image size, must change
 	float k_weightedangleoffset{ -1.0f };
 	float k_weightedcenteroffset{ -1.0f };			//Relative to image size, must change
@@ -101,8 +98,8 @@ void ProcessImage ( cv::Mat& image,
 	cv::HoughLinesP( image,
 					 lines,
 					 1,
-					 CV_PI/180,
-					 80,
+					 0.06981317007,					//Pi / 45
+					 lanedetectconstants::k_threshold,
 					 lanedetectconstants::k_minimumsize,
 					 lanedetectconstants::k_maxlinegap );
 
@@ -183,13 +180,13 @@ void ProcessImage ( cv::Mat& image,
 
 /*****************************************************************************************/	
 void EvaluateLine( const cv::Vec4i line,
-					  std::vector<EvaluatedLine>& evaluatedsegments )
+					  std::vector<EvaluatedLine>& evaluatedlines )
 {	
 	//Calculate center point
 	cv::Point center{ cv::Point((line[0] + line[2]) / 2, (line[1] + line[3]) / 2) };
 									
 	//Filter by screen position
-	if ( center.y < (lanedetectconstants::k_verticalsegmentlimit)) return;
+	if ( center.y < (lanedetectconstants::k_verticallimit)) return;
 
 	//Filter by angle
 	float angle{ FastArcTan2(line[3] - line[1], line[2] - line[0]) };
@@ -197,18 +194,18 @@ void EvaluateLine( const cv::Vec4i line,
 		angle += 180.0f;
 	}
 
-	evaluatedsegments.push_back( EvaluatedLine{line, angle, center} );
+	evaluatedlines.push_back( EvaluatedLine{line, angle, center} );
 	return;
 }
 
 
 /*****************************************************************************************/
-void SortLines( const std::vector<EvaluatedLine>& evaluatedsegments,
+void SortLines( const std::vector<EvaluatedLine>& evaluatedlines,
                    const int imagewidth,
 				   std::vector<EvaluatedLine>& leftlines,
 				   std::vector<EvaluatedLine>& rightlines )
 {
-	for ( const EvaluatedLine &evaluatedline : evaluatedsegments ) {
+	for ( const EvaluatedLine &evaluatedline : evaluatedlines ) {
 		//Push into either left or right evaluated line set
 		if ( evaluatedline.center.x < (imagewidth * 0.6f) ) {
 			//Filter by angle
@@ -283,9 +280,6 @@ void FindPolygon( Polygon& polygon,
 	} else {
 		maxy = maxyactual;
 	}
-	
-	//Filter by height
-	if ( (maxyactual - miny) < lanedetectconstants::k_minimumpolygonheight ) return;
 	
 	//Construct polygon
 	if ( useoptimaly ) {

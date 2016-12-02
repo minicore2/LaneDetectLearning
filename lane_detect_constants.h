@@ -25,9 +25,10 @@ namespace lanedetectconstants {
 	extern float k_contrastscalefactor;
 	
 	//Line filtering
-	extern uint16_t k_verticalsegmentlimit;
+	extern uint16_t k_verticallimit;
 	extern uint16_t k_minimumsize;
 	extern uint16_t k_maxlinegap;
+	extern uint16_t k_threshold;
 	extern float k_minimumangle;
 	
 	//Polygon filtering
@@ -36,7 +37,6 @@ namespace lanedetectconstants {
 	
 	//Scoring
 	extern float k_anglefromcenter;
-	extern uint16_t k_minimumpolygonheight;
 	extern float k_lowestscorelimit;
 	extern float k_weightedheightwidth;
 	extern float k_weightedangleoffset;

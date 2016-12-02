@@ -37,8 +37,8 @@ struct PolygonDifferences {
 };
 
 void EvaluateLine( const cv::Vec4i line,
-	                  std::vector<EvaluatedLine>& evaluatedsegments );
-void SortLines( const std::vector<EvaluatedLine>& evaluatedsegments,
+	                  std::vector<EvaluatedLine>& evaluatedlines );
+void SortLines( const std::vector<EvaluatedLine>& evaluatedlines,
 				   const int imagewidth,
 				   std::vector<EvaluatedLine>& leftlines,
 				   std::vector<EvaluatedLine>& rightlines );
