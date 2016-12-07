@@ -28,15 +28,14 @@ namespace lanedetectconstants {
 	extern uint16_t k_segmentminimumsize;
 	extern uint16_t k_verticalsegmentlimit;
 	extern float k_maxvanishingpointangle;
-	//extern float k_segmentlengthwidthratio;
-	extern float k_segmentsanglewindow;
 	extern uint16_t k_vanishingpointx;
 	extern uint16_t k_vanishingpointy;
-	
-	//Contour filtering
+		
+	//Line filtering
+	extern uint16_t k_verticallimit;
 	extern uint16_t k_minimumsize;
-	extern float k_minimumangle;
-	extern float k_lengthwidthratio;
+	extern uint16_t k_maxlinegap;
+	extern uint16_t k_threshold;
 	
 	//Polygon filtering
     extern uint16_t k_minroadwidth;

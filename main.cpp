@@ -112,8 +112,8 @@ int main(int argc,char *argv[])
 	//	lanedetectconstants::k_segmentsanglewindow, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_minimumsize",
 		lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_minimumangle",
-		lanedetectconstants::k_minimumangle, 20.0, 45.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_minimumangle",
+	//	lanedetectconstants::k_minimumangle, 20.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_anglefromcenter",
 		lanedetectconstants::k_anglefromcenter, 5.0, 45.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_contrastscalefactor",
@@ -233,16 +233,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 		//	lanedetectconstants::k_segmentlengthwidthratio = l.value_;
 		} else if (l.variablename_ == "k_minimumsize" ) {
 			lanedetectconstants::k_minimumsize = l.value_;
-		} else if (l.variablename_ == "k_minimumangle" ) {
-			lanedetectconstants::k_minimumangle = l.value_;
-		} else if (l.variablename_ == "k_lengthwidthratio" ) {
-			lanedetectconstants::k_lengthwidthratio = l.value_;
+		//} else if (l.variablename_ == "k_minimumangle" ) {
+		//	lanedetectconstants::k_minimumangle = l.value_;
+		//} else if (l.variablename_ == "k_lengthwidthratio" ) {
+		//	lanedetectconstants::k_lengthwidthratio = l.value_;
 		} else if (l.variablename_ == "k_minroadwidth" ) {
 			lanedetectconstants::k_minroadwidth = l.value_;
 		} else if (l.variablename_ == "k_maxroadwidth" ) {
 			lanedetectconstants::k_maxroadwidth = l.value_;
-		} else if (l.variablename_ == "k_segmentsanglewindow" ) {
-			lanedetectconstants::k_segmentsanglewindow = l.value_;
+		//} else if (l.variablename_ == "k_segmentsanglewindow" ) {
+		//	lanedetectconstants::k_segmentsanglewindow = l.value_;
 		} else if (l.variablename_ == "k_minimumpolygonheight" ) {
 			lanedetectconstants::k_minimumpolygonheight = l.value_;
 		} else if (l.variablename_ == "k_segmentminimumsize" ) {
