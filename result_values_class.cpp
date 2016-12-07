@@ -176,6 +176,6 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	previousscore_ = score_;
 	if ( laneconstant.finished_ ) return;
 	laneconstant.Modify();
-	
+
 	return;
 }

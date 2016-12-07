@@ -49,10 +49,9 @@ namespace lanedetectconstants {
 	//Segment filtering
 	uint16_t k_segmentminimumsize{ 30 };			//Relative to image size, must change
 	uint16_t k_verticalsegmentlimit{ 250 };			//Relative to image size, must change
-	float k_segmentminimumangle{ 20.0f };
-	//float k_segmentlengthwidthratio{ 3.5f 
+	float k_maxvanishingpointangle{ 18.0f };
 	uint16_t k_vanishingpointx{ 400 };				//Relative to image size, must change
-	uint16_t k_vanishingpointy{ 220 };				//Relative to image size, must change
+	uint16_t k_vanishingpointy{ 250 };				//Relative to image size, must change
 	
 	//Contour construction filter
 	float k_segmentsanglewindow{ 34.0f };
@@ -275,10 +274,11 @@ bool CheckAngle( const cv::Point center,
 	}
 
 	//Check difference against limit and return result
-	if ( fabs(angle - vanishingpointangle) > lanedetectconstants::k_segmentminimumangle ) {
-		return false;
-	} else {
+	if ( fabs(angle - vanishingpointangle) >
+		 lanedetectconstants::k_maxvanishingpointangle ) {
 		return true;
+	} else {
+		return false;
 	}
 }
 /*****************************************************************************************/	
@@ -298,10 +298,10 @@ void ConstructFromSegments( const  std::vector<EvaluatedContour>& evaluatedsegme
 				createdangle += 180.0f;
 			}
 			if ( createdangle < 90.0f ) {
-				if ( createdangle < lanedetectconstants::k_segmentminimumangle ) return;
+				if ( createdangle < lanedetectconstants::k_maxvanishingpointangle ) return;
 			} else {
 				if ( createdangle > (180.0f -
-					 lanedetectconstants::k_segmentminimumangle) ) return;
+					 lanedetectconstants::k_maxvanishingpointangle) ) return;
 			}
 			float angledifference2( fabs(createdangle -	segcontour1.angle) );
 			if ( angledifference2 > lanedetectconstants::k_segmentsanglewindow ) continue;
