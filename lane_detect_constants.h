@@ -42,7 +42,6 @@ namespace lanedetectconstants {
     extern uint16_t k_maxroadwidth;
 	
 	//Scoring
-	extern uint16_t k_minimumpolygonheight;
 	extern float k_lowestscorelimit;
 	extern float k_weightedheightwidth;
 	extern float k_weightedangleoffset;

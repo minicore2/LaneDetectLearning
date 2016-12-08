@@ -56,15 +56,14 @@ namespace lanedetectconstants {
 	//Line filtering
 	uint16_t k_verticallimit{ 250 };				//Relative to image size, must change
 	uint16_t k_minimumsize{ 30 };					//Relative to image size, must change
-	uint16_t k_maxlinegap{ 6 };						//Relative to image size, must change
-	uint16_t k_threshold{ 80 };						//Relative to image size, must change
+	uint16_t k_maxlinegap{ 3 };						//Relative to image size, must change
+	uint16_t k_threshold{ 40 };						//Relative to image size, must change
 
 	//Polygon filtering
     uint16_t k_minroadwidth{ 500 };					//Relative to image size, must change
     uint16_t k_maxroadwidth{ 660 };					//Relative to image size, must change
 	
 	//Scoring
-	uint16_t k_minimumpolygonheight{ 12 };			//Relative to image size, must change
 	float k_lowestscorelimit{ -400.0f };			//Relative to image size, must change
 	float k_weightedheightwidth{ 100.0f };			//Relative to image size, must change
 	float k_weightedangleoffset{ -1.0f };
