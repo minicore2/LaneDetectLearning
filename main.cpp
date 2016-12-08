@@ -7,14 +7,11 @@
 	  lane detection.
 
   Description:
-      This application will process multiple video files to determine the best lande detect
+      This application will process multiple video files to determine the best lane detect
 	  parameters for consistent lane detection.  It is a tool to determine the best values
 	  for the DAPrototype project's lane detection system.
 
       OpenCV 3.1.0 -> Compiled with OpenGL support, www.opencv.org
-
-  Other notes:
-      Style is following the Google C++ styleguide
 
   History:
       Date         Author      Description
@@ -85,15 +82,23 @@ int main(int argc,char *argv[])
 	uint32_t messagecount{totalframes/100};	//Every 1%
 
 	//Create variable classes
-	double increment{0.5};
+	double increment{1.0};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
-	//laneconstants.push_back( LaneConstant( "k_lengthwidthratio",
-	//	lanedetectconstants::k_lengthwidthratio, 0.0, 15.0, 0.05*increment) );
 	//laneconstants.push_back( LaneConstant( "k_vanishingpointy",
-	//	lanedetectconstants::k_vanishingpointy, 180.0, 280, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_maxvanishingpointangle",
-		lanedetectconstants::k_maxvanishingpointangle, 5.0, 40.0, -0.05*increment) );
+	//	lanedetectconstants::k_vanishingpointy, 220.0, 260, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_segmentminimumsize",
+	//	lanedetectconstants::k_segmentminimumsize, 20.0, 40.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_minimumsize",
+	//	lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_threshold",
+		lanedetectconstants::k_threshold, 60.0, 120.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxlinegap",
+		lanedetectconstants::k_maxlinegap, 1.0, 8.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_minroadwidth",
+		lanedetectconstants::k_minroadwidth, 400.0, 600.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxroadwidth",
+		lanedetectconstants::k_maxroadwidth, 600.0, 800.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_weightedangleoffset",
 		lanedetectconstants::k_weightedangleoffset, -10.0, -1.0, -0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
@@ -104,18 +109,8 @@ int main(int argc,char *argv[])
 		lanedetectconstants::k_lowestscorelimit, -500.0, 500.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_minimumpolygonheight",
 		lanedetectconstants::k_minimumpolygonheight, 5, 100, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_segmentminimumsize",
-	//	lanedetectconstants::k_segmentminimumsize, 5.0, 40.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_segmentlengthwidthratio",
-	//	lanedetectconstants::k_segmentlengthwidthratio, 1.0, 5.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_segmentsanglewindow",
-	//	lanedetectconstants::k_segmentsanglewindow, 5.0, 45.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_minimumsize",
-		lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_minimumangle",
-	//	lanedetectconstants::k_minimumangle, 20.0, 45.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_anglefromcenter",
-		lanedetectconstants::k_anglefromcenter, 5.0, 45.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxvanishingpointangle",
+		lanedetectconstants::k_maxvanishingpointangle, 18.0, 24.0, -0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_contrastscalefactor",
 		lanedetectconstants::k_contrastscalefactor, 0.2, 0.4, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
@@ -225,14 +220,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::k_weightedheightwidth = l.value_;
 		} else if (l.variablename_ == "k_contrastscalefactor" ) {
 			lanedetectconstants::k_contrastscalefactor = l.value_;
-		} else if (l.variablename_ == "k_anglefromcenter" ) {
-			lanedetectconstants::k_anglefromcenter = l.value_;
 		} else if (l.variablename_ == "k_maxvanishingpointangle" ) {
 			lanedetectconstants::k_maxvanishingpointangle = l.value_;
 		//} else if (l.variablename_ == "k_segmentlengthwidthratio" ) {
 		//	lanedetectconstants::k_segmentlengthwidthratio = l.value_;
 		} else if (l.variablename_ == "k_minimumsize" ) {
 			lanedetectconstants::k_minimumsize = l.value_;
+		} else if (l.variablename_ == "k_maxlinegap" ) {
+			lanedetectconstants::k_maxlinegap = l.value_;
+		} else if (l.variablename_ == "k_threshold" ) {
+			lanedetectconstants::k_threshold = l.value_;
 		//} else if (l.variablename_ == "k_minimumangle" ) {
 		//	lanedetectconstants::k_minimumangle = l.value_;
 		//} else if (l.variablename_ == "k_lengthwidthratio" ) {

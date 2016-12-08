@@ -47,15 +47,15 @@ namespace lanedetectconstants {
 	float k_contrastscalefactor{ 0.3f };
 	
 	//Segment filtering
-	uint16_t k_segmentminimumsize{ 30 };			//Relative to image size, must change
-	uint16_t k_verticalsegmentlimit{ 250 };			//Relative to image size, must change
-	float k_maxvanishingpointangle{ 18.0f };
+	uint16_t k_segmentminimumsize{ 20 };			//Relative to image size, must change
+	uint16_t k_verticalsegmentlimit{ 220 };			//Relative to image size, must change
+	float k_maxvanishingpointangle{ 20.0f };
 	uint16_t k_vanishingpointx{ 400 };				//Relative to image size, must change
-	uint16_t k_vanishingpointy{ 250 };				//Relative to image size, must change
+	uint16_t k_vanishingpointy{ 260 };				//Relative to image size, must change
 	
 	//Line filtering
 	uint16_t k_verticallimit{ 250 };				//Relative to image size, must change
-	uint16_t k_minimumsize{ 50 };					//Relative to image size, must change
+	uint16_t k_minimumsize{ 30 };					//Relative to image size, must change
 	uint16_t k_maxlinegap{ 6 };						//Relative to image size, must change
 	uint16_t k_threshold{ 80 };						//Relative to image size, must change
 
@@ -64,7 +64,6 @@ namespace lanedetectconstants {
     uint16_t k_maxroadwidth{ 660 };					//Relative to image size, must change
 	
 	//Scoring
-	float k_anglefromcenter{ 26.0f };
 	uint16_t k_minimumpolygonheight{ 12 };			//Relative to image size, must change
 	float k_lowestscorelimit{ -400.0f };			//Relative to image size, must change
 	float k_weightedheightwidth{ 100.0f };			//Relative to image size, must change
@@ -159,10 +158,7 @@ void ProcessImage ( cv::Mat& image,
 	//Find best score
 	for ( EvaluatedLine &leftevaluatedline : leftlines ) {
 		for ( EvaluatedLine &rightevaluatedline : rightlines ) {
-			//Check sum angle
-			if ( (fabs(180.0f - leftevaluatedline.angle - rightevaluatedline.angle) *
-				  0.5f) > lanedetectconstants::k_anglefromcenter ) continue;
-			
+			//Create polygon
 			Polygon newpolygon{ cv::Point(0,0),
 								cv::Point(0,0),
 								cv::Point(0,0),

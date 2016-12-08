@@ -120,7 +120,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	averagematch_ = Average(matchqueue_);
 	if ( firstpass_ ) {
 		//Hardcoded now to tip balance to good average match
-		lanedetectmultiplier_ = 0.10;
+		lanedetectmultiplier_ = 0.30;
 		/*
 		//Adjust detected frame multiplier to bring inital score to 0!
 		lanedetectmultiplier_ = averagematch_ * (static_cast<double>(totalframes_)
@@ -133,7 +133,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 	outputscore_ = score_;
 
 	//Temporary code just to iterate through span of all variables
-
+/*
 	if ( laneconstant.hitlimit_ ) {
 			laneconstant.finished_ = true;	
 			laneconstant.value_ = laneconstant.initialvalue_;
@@ -142,7 +142,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 		laneconstant.Modify();
 	}
 
-/*
+*/
 	//Figure it out
 	if ( laneconstant.hitlimit_ ) {
 		if ( (laneconstant.reversedcount_ == 0) && (score_ == previousscore_ )) {
@@ -172,7 +172,7 @@ void ResultValues::Update(LaneConstant& laneconstant)
 			score_ = previousscore_;
 		}
 	}
-*/
+
 	previousscore_ = score_;
 	if ( laneconstant.finished_ ) return;
 	laneconstant.Modify();
