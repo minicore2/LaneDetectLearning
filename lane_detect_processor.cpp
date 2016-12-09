@@ -112,7 +112,7 @@ void ProcessImage ( cv::Mat& image,
 //Filter and sort lines
 //-----------------------------------------------------------------------------------------	
 	std::vector<EvaluatedLine> evaluatedlines;
-	for ( cv::Vec4i line : lines ) {
+	for ( cv::Vec4i &line : lines ) {
 		EvaluateLine( line, evaluatedlines );
 	}
 
@@ -197,7 +197,7 @@ bool CheckAngle( const cv::Point center,
 }
 
 /*****************************************************************************************/	
-void EvaluateLine( const cv::Vec4i line,
+void EvaluateLine( const cv::Vec4i& line,
 				   std::vector<EvaluatedLine>& evaluatedlines )
 {	
 	//Calculate center point
@@ -370,12 +370,12 @@ void AveragePolygon ( Polygon& polygon,
 	//Sum nonzero
 	Polygon averagepolygon { lanedetectconstants::defaultpolygon };
 	int nonzerocount{0};
-	for ( Polygon &ipolygon : pastpolygons ) {
-		if ( ipolygon == lanedetectconstants::defaultpolygon) continue;
+	for ( Polygon &polygon : pastpolygons ) {
+		if ( polygon == lanedetectconstants::defaultpolygon) continue;
 		nonzerocount++;
-		for ( int i = 0; i < ipolygon.size(); i++ ) {
-			averagepolygon[i].x += ipolygon[i].x;
-			averagepolygon[i].y += ipolygon[i].y;
+		for ( int i = 0; i < polygon.size(); i++ ) {
+			averagepolygon[i].x += polygon[i].x;
+			averagepolygon[i].y += polygon[i].y;
 		}
 	}	
 	if ( nonzerocount == 0 ) return;

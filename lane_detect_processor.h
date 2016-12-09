@@ -39,7 +39,7 @@ struct PolygonDifferences {
 
 bool CheckAngle( const cv::Point center,
 				 const float angle );
-void EvaluateLine( const cv::Vec4i line,
+void EvaluateLine( const cv::Vec4i& line,
 				   std::vector<EvaluatedLine>& evaluatedlines );
 void SortLines( const std::vector<EvaluatedLine>& evaluatedlines,
 			    const int imagewidth,
