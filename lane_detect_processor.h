@@ -37,7 +37,6 @@ struct PolygonDifferences {
 	float differencefromaverage;
 };
 
-void FilterContours( std::vector<Contour>& contours );
 bool CheckAngle( const cv::Point center,
 				 const float angle );
 void EvaluateLine( const cv::Vec4i line,

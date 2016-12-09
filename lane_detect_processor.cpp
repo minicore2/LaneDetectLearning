@@ -90,9 +90,6 @@ void ProcessImage ( cv::Mat& image,
 	//Blur to reduce noise
     cv::blur( image, image, cv::Size(3,3) );
 	
-//-----------------------------------------------------------------------------------------
-//Find contours
-//-----------------------------------------------------------------------------------------
 	//Auto threshold values for canny edge detection
 	cv::Scalar mean;     
 	cv::Scalar std;
@@ -101,25 +98,6 @@ void ProcessImage ( cv::Mat& image,
 	
 	//Canny edge detection
     cv::Canny( image, image, lowerthreshold, 3 * lowerthreshold );
-	std::vector<Contour> detectedcontours;
-    std::vector<cv::Vec4i> detectedhierarchy;
-    cv::findContours( image,
-					  detectedcontours,
-					  detectedhierarchy,
-					  CV_RETR_CCOMP,
-					  CV_CHAIN_APPROX_SIMPLE );
-	
-//-----------------------------------------------------------------------------------------
-//Filter contours
-//-----------------------------------------------------------------------------------------
-	std::vector<Contour> filteredcontours;
-	FilterContours( detectedcontours );
-
-//-----------------------------------------------------------------------------------------
-//Draw contours on new Mat
-//-----------------------------------------------------------------------------------------	
-	cv::Mat houghlinesmat{ cv::Mat(image.size(), CV_8U, cv::Scalar(0)) };
-	cv::drawContours( houghlinesmat,  detectedcontours, -1, cv::Scalar(255) );
 
 //-----------------------------------------------------------------------------------------
 //Use Probalistic Hough Lines
@@ -197,54 +175,6 @@ void ProcessImage ( cv::Mat& image,
 	std::copy( std::begin(bestpolygon),
 			   std::end(bestpolygon),
 			   std::begin(polygon) );
-	return;
-}
-
-/*****************************************************************************************/	
-void FilterContours( std::vector<Contour>& contours )
-{
-		contours.erase(
-			std::remove_if(
-				contours.begin(),
-				contours.end(),
-				[](const Contour &contour)
-				{
-					if ( contour.size() < lanedetectconstants::k_segmentminimumsize ) {
-						return true;
-					}
-						
-					//Calculate center point
-					cv::Point center { std::accumulate(contour.begin(),
-													   contour.end(),
-													   cv::Point(0,0)) };
-					center = cv::Point( center.x / contour.size(),
-										center.y / contour.size() );
-					
-					//Filter by screen position
-					if ( center.y < (lanedetectconstants::k_verticalsegmentlimit)) {
-						return true;
-					}
-
-					//Create fitline
-					cv::Vec4f fitline;
-					cv::fitLine(contour, fitline, CV_DIST_L2, 0, 0.1, 0.1 );
-
-					//Filter by angle
-					float angle{ FastArcTan2(fitline[1], fitline[0]) };
-					if (angle < 0.0f) {
-						angle += 180.0f;
-					}
-					
-					//Check that angle points to vanishing point
-					if ( CheckAngle(center, angle) ) {
-						return true;
-					}
-					
-					return false;
-				}
-			),
-			contours.end()
-		);
 	return;
 }
 
