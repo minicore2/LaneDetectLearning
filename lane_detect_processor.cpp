@@ -50,17 +50,13 @@ namespace lanedetectconstants {
 							 cv::Point(0,0) };
 							 
 	//Image evaluation
-	float k_contrastscalefactor{ 0.3f };
+	float k_contrastscalefactor{ 0.35f };
 	
-	//Segment filtering
-	uint16_t k_segmentminimumsize{ 20 };			//Relative to image size, must change
-	uint16_t k_verticalsegmentlimit{ 220 };			//Relative to image size, must change
+	//Line filtering
 	float k_maxvanishingpointangle{ 20.0f };
 	uint16_t k_vanishingpointx{ 400 };				//Relative to image size, must change
 	uint16_t k_vanishingpointy{ 260 };				//Relative to image size, must change
-	
-	//Line filtering
-	uint16_t k_verticallimit{ 250 };				//Relative to image size, must change
+	uint16_t k_verticallimit{ 280 };				//Relative to image size, must change
 	uint16_t k_minimumsize{ 30 };					//Relative to image size, must change
 	uint16_t k_maxlinegap{ 3 };						//Relative to image size, must change
 	uint16_t k_threshold{ 40 };						//Relative to image size, must change

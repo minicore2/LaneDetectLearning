@@ -86,9 +86,7 @@ int main(int argc,char *argv[])
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
 	laneconstants.push_back( LaneConstant( "k_vanishingpointy",
-		lanedetectconstants::k_vanishingpointy, 220.0, 260, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_segmentminimumsize",
-		lanedetectconstants::k_segmentminimumsize, 20.0, 40.0, 0.05*increment) );
+		lanedetectconstants::k_vanishingpointy, 220.0, 280, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_minimumsize",
 		lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_threshold",
@@ -220,26 +218,16 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::k_contrastscalefactor = l.value_;
 		} else if (l.variablename_ == "k_maxvanishingpointangle" ) {
 			lanedetectconstants::k_maxvanishingpointangle = l.value_;
-		//} else if (l.variablename_ == "k_segmentlengthwidthratio" ) {
-		//	lanedetectconstants::k_segmentlengthwidthratio = l.value_;
 		} else if (l.variablename_ == "k_minimumsize" ) {
 			lanedetectconstants::k_minimumsize = l.value_;
 		} else if (l.variablename_ == "k_maxlinegap" ) {
 			lanedetectconstants::k_maxlinegap = l.value_;
 		} else if (l.variablename_ == "k_threshold" ) {
 			lanedetectconstants::k_threshold = l.value_;
-		//} else if (l.variablename_ == "k_minimumangle" ) {
-		//	lanedetectconstants::k_minimumangle = l.value_;
-		//} else if (l.variablename_ == "k_lengthwidthratio" ) {
-		//	lanedetectconstants::k_lengthwidthratio = l.value_;
 		} else if (l.variablename_ == "k_minroadwidth" ) {
 			lanedetectconstants::k_minroadwidth = l.value_;
 		} else if (l.variablename_ == "k_maxroadwidth" ) {
 			lanedetectconstants::k_maxroadwidth = l.value_;
-		//} else if (l.variablename_ == "k_segmentsanglewindow" ) {
-		//	lanedetectconstants::k_segmentsanglewindow = l.value_;
-		} else if (l.variablename_ == "k_segmentminimumsize" ) {
-			lanedetectconstants::k_segmentminimumsize = l.value_;
 		} else if (l.variablename_ == "k_weightedcenteroffset" ) {
 			lanedetectconstants::k_weightedcenteroffset = l.value_;
 		} else if (l.variablename_ == "k_weightedangleoffset" ) {
