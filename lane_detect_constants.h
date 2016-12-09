@@ -21,10 +21,7 @@
 /*****************************************************************************************/
 namespace lanedetectconstants {
 	//Default polygon
-	Polygon defaultpolygon { cv::Point(0,0),
-							 cv::Point(0,0),
-							 cv::Point(0,0),
-							 cv::Point(0,0) };
+	extern Polygon defaultpolygon;
 
 	//Image evaluation
 	extern float k_contrastscalefactor;

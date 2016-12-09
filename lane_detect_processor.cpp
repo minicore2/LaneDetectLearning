@@ -43,6 +43,12 @@
 
 /*****************************************************************************************/
 namespace lanedetectconstants {
+	//Default polygon
+	Polygon defaultpolygon { cv::Point(0,0),
+							 cv::Point(0,0),
+							 cv::Point(0,0),
+							 cv::Point(0,0) };
+							 
 	//Image evaluation
 	float k_contrastscalefactor{ 0.3f };
 	
@@ -120,7 +126,7 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------	
 	//Probalistic Houghlines
 	std::vector<cv::Vec4i> lines;
-	cv::HoughLinesP( houghlinesmat,
+	cv::HoughLinesP( image,
 					 lines,
 					 1,
 					 0.06981317007,					//Pi / 45

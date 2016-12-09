@@ -85,16 +85,16 @@ int main(int argc,char *argv[])
 	double increment{1.0};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
-	//laneconstants.push_back( LaneConstant( "k_vanishingpointy",
-	//	lanedetectconstants::k_vanishingpointy, 220.0, 260, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_segmentminimumsize",
-	//	lanedetectconstants::k_segmentminimumsize, 20.0, 40.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_minimumsize",
-	//	lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_vanishingpointy",
+		lanedetectconstants::k_vanishingpointy, 220.0, 260, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_segmentminimumsize",
+		lanedetectconstants::k_segmentminimumsize, 20.0, 40.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_minimumsize",
+		lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_threshold",
 		lanedetectconstants::k_threshold, 20.0, 80.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_maxlinegap",
-	//	lanedetectconstants::k_maxlinegap, 1.0, 8.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxlinegap",
+		lanedetectconstants::k_maxlinegap, 2.0, 15.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_weightedangleoffset",
 		lanedetectconstants::k_weightedangleoffset, -10.0, -1.0, -0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
