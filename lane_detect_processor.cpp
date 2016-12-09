@@ -126,7 +126,7 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------	
 	//Probalistic Houghlines
 	std::vector<cv::Vec4i> lines;
-	cv::HoughLinesP( image,
+	cv::HoughLinesP( houghlinesmat,
 					 lines,
 					 1,
 					 0.06981317007,					//Pi / 45
