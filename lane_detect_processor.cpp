@@ -322,14 +322,14 @@ void FindPolygon( Polygon& polygon,
 	if ( leftevaluatedline.center.x > rightevaluatedline.center.x ) return;
 	
 	//Define slopes
-	float leftslopeinverse{ (leftevaluatedline.line[2] -
-							 leftevaluatedline.line[0]) /
-							(leftevaluatedline.line[3] -
-							 leftevaluatedline.line[1]) };
-	float rightslopeinverse{ (rightevaluatedline.line[2] -
-							 rightevaluatedline.line[0]) /
-							(rightevaluatedline.line[3] -
-							 rightevaluatedline.line[1]) };
+	float leftslopeinverse{ static_cast<float>(leftevaluatedline.line[2] -
+											   leftevaluatedline.line[0]) /
+							static_cast<float>(leftevaluatedline.line[3] -
+											   leftevaluatedline.line[1]) };
+	float rightslopeinverse{ static_cast<float>(rightevaluatedline.line[2] -
+											   rightevaluatedline.line[0]) /
+							static_cast<float>(rightevaluatedline.line[3] -
+											   rightevaluatedline.line[1]) };
 	
 	//Check shape before continuing
 	if ( (leftslopeinverse > 0.0f) && (rightslopeinverse < 0.0f) ) return;
@@ -390,6 +390,20 @@ void FindPolygon( Polygon& polygon,
 							(leftevaluatedline.center.y - miny) *
 							leftslopeinverse,
 							miny );
+							
+	//Handle polygon intersection
+	if ( polygon[3].x > polygon[2].x ) {
+		//Use intersection point for both - y=mx+b
+		float bleft{ leftevaluatedline.center.y -
+					 leftevaluatedline.center.x / leftslopeinverse };
+		float bright{ rightevaluatedline.center.y -
+					 rightevaluatedline.center.x / rightslopeinverse };
+		int x{ static_cast<int>((bright - bleft) /
+								((1.0f / leftslopeinverse) -
+								 (1.0f / rightslopeinverse))) };
+		int y{ static_cast<int>((1.0f / leftslopeinverse) * x) + bleft };
+		polygon[3] = polygon[2] = cv::Point(x, y);
+	}
 
 	return;
 }
