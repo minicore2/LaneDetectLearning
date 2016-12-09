@@ -82,33 +82,37 @@ int main(int argc,char *argv[])
 	uint32_t messagecount{totalframes/100};	//Every 1%
 
 	//Create variable classes
-	double increment{1.0};
+	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
-	laneconstants.push_back( LaneConstant( "k_vanishingpointy",
-		lanedetectconstants::k_vanishingpointy, 220.0, 280, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_contrastscalefactor",
+		lanedetectconstants::k_contrastscalefactor, 0.6, 1.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_theta",
+		lanedetectconstants::k_theta, 0.07, 0.21, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_vanishingpointy",
+	//	lanedetectconstants::k_vanishingpointy, 220.0, 280, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_ystartposition",
+		lanedetectconstants::k_ystartposition, 180, 260, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxvanishingpointangle",
+		lanedetectconstants::k_maxvanishingpointangle, 10.0, 26.0, -0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_minimumsize",
 		lanedetectconstants::k_minimumsize, 10.0, 80.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_minroadwidth",
+		lanedetectconstants::k_minroadwidth, 400.0, 600.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_maxroadwidth",
+		lanedetectconstants::k_maxroadwidth, 600.0, 800.0, -0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_threshold",
 		lanedetectconstants::k_threshold, 20.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_maxlinegap",
 		lanedetectconstants::k_maxlinegap, 2.0, 15.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_weightedangleoffset",
-		lanedetectconstants::k_weightedangleoffset, -10.0, -1.0, -0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
-		lanedetectconstants::k_weightedcenteroffset,-10.0, -1.0, -0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_weightedheightwidth",
-		lanedetectconstants::k_weightedheightwidth, 100.0, 400.0, 0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_weightedangleoffset",
+	//	lanedetectconstants::k_weightedangleoffset, -10.0, -1.0, -0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
+	//	lanedetectconstants::k_weightedcenteroffset,-10.0, -1.0, -0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_weightedheightwidth",
+	//	lanedetectconstants::k_weightedheightwidth, 100.0, 400.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_lowestscorelimit",
 		lanedetectconstants::k_lowestscorelimit, -500.0, 500.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_maxvanishingpointangle",
-		lanedetectconstants::k_maxvanishingpointangle, 18.0, 24.0, -0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_minroadwidth",
-		lanedetectconstants::k_minroadwidth, 400.0, 600.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_maxroadwidth",
-		lanedetectconstants::k_maxroadwidth, 600.0, 800.0, 0.05*increment) );
-	laneconstants.push_back( LaneConstant( "k_contrastscalefactor",
-		lanedetectconstants::k_contrastscalefactor, 0.2, 0.4, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
 	
 	//Create header of resultsfile file
@@ -234,8 +238,12 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::k_weightedangleoffset = l.value_;
 		} else if (l.variablename_ == "k_vanishingpointy" ) {
 			lanedetectconstants::k_vanishingpointy = l.value_;
+		} else if (l.variablename_ == "k_ystartposition" ) {
+			lanedetectconstants::k_ystartposition = l.value_;
 		} else if (l.variablename_ == "k_lowestscorelimit" ) {
 			lanedetectconstants::k_lowestscorelimit = l.value_;
+		} else if (l.variablename_ == "k_theta" ) {
+			lanedetectconstants::k_theta = l.value_;
 		} else {
 			std::cout << "Programming error, variable does not exist!" << std::endl;
 			std::cin.get();

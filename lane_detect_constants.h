@@ -25,12 +25,15 @@ namespace lanedetectconstants {
 
 	//Image evaluation
 	extern float k_contrastscalefactor;
+	extern uint16_t k_ystartposition;
 	
 	//Line filtering
 	extern float k_maxvanishingpointangle;
 	extern uint16_t k_vanishingpointx;
 	extern uint16_t k_vanishingpointy;
 	extern uint16_t k_verticallimit;
+	extern uint16_t k_rho;
+	extern float k_theta;
 	extern uint16_t k_minimumsize;
 	extern uint16_t k_maxlinegap;
 	extern uint16_t k_threshold;

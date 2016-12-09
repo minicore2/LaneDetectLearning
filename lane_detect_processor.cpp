@@ -50,16 +50,19 @@ namespace lanedetectconstants {
 							 cv::Point(0,0) };
 							 
 	//Image evaluation
-	float k_contrastscalefactor{ 0.35f };
+	float k_contrastscalefactor{ 0.68f };
+	uint16_t k_ystartposition{ 240 };
 	
 	//Line filtering
-	float k_maxvanishingpointangle{ 20.0f };
+	float k_maxvanishingpointangle{ 18.0f };
 	uint16_t k_vanishingpointx{ 400 };				//Relative to image size, must change
-	uint16_t k_vanishingpointy{ 260 };				//Relative to image size, must change
+	uint16_t k_vanishingpointy{ 266 };				//Relative to image size, must change
 	uint16_t k_verticallimit{ 280 };				//Relative to image size, must change
-	uint16_t k_minimumsize{ 30 };					//Relative to image size, must change
-	uint16_t k_maxlinegap{ 3 };						//Relative to image size, must change
-	uint16_t k_threshold{ 40 };						//Relative to image size, must change
+	uint16_t k_rho{ 1 };
+	float k_theta{ 0.13962634015f };				//Pi / 22.5
+	uint16_t k_minimumsize{ 25 };					//Relative to image size, must change
+	uint16_t k_maxlinegap{ 5 };						//Relative to image size, must change
+	uint16_t k_threshold{ 30 };						//Relative to image size, must change
 
 	//Polygon filtering
     uint16_t k_minroadwidth{ 500 };					//Relative to image size, must change
@@ -68,7 +71,7 @@ namespace lanedetectconstants {
 	//Scoring
 	float k_lowestscorelimit{ -400.0f };			//Relative to image size, must change
 	float k_weightedheightwidth{ 100.0f };			//Relative to image size, must change
-	float k_weightedangleoffset{ -1.0f };
+	float k_weightedangleoffset{ -5.0f };
 	float k_weightedcenteroffset{ -1.0f };			//Relative to image size, must change
 
 }
@@ -80,30 +83,58 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------
 //Image manipulation
 //-----------------------------------------------------------------------------------------
+	//Create mat of ROI to improve performance
+	cv::Mat houghlinesmat{ image.size(), image.type(), cv::Scalar(0) };
+	image( cv::Rect(0,
+					lanedetectconstants::k_ystartposition,
+					image.cols,
+					image.rows -
+					lanedetectconstants::k_ystartposition)).copyTo(houghlinesmat(cv::Rect(0,
+					lanedetectconstants::k_ystartposition,
+					image.cols,
+					image.rows -
+					lanedetectconstants::k_ystartposition)));
+					
 	//Change to grayscale
-	cv::cvtColor( image, image, CV_BGR2GRAY );
+	cv::cvtColor( houghlinesmat, houghlinesmat, CV_BGR2GRAY );
 	
 	//Blur to reduce noise
-    cv::blur( image, image, cv::Size(3,3) );
+    cv::blur( houghlinesmat(cv::Rect(0,
+									 lanedetectconstants::k_ystartposition,
+									 houghlinesmat.cols,
+									 houghlinesmat.rows -
+									 lanedetectconstants::k_ystartposition)),
+			  houghlinesmat(cv::Rect(0,
+									 lanedetectconstants::k_ystartposition,
+									 houghlinesmat.cols,
+									 houghlinesmat.rows -
+									 lanedetectconstants::k_ystartposition)),
+			  cv::Size(3,3) );
 	
 	//Auto threshold values for canny edge detection
 	cv::Scalar mean;     
 	cv::Scalar std;
-	cv::meanStdDev(image, mean, std);
+	cv::meanStdDev( houghlinesmat(cv::Rect(0,
+										   lanedetectconstants::k_ystartposition,
+										   image.cols,
+										   image.rows -
+										   lanedetectconstants::k_ystartposition)),
+					mean,
+					std );
 	double lowerthreshold{ lanedetectconstants::k_contrastscalefactor * std[0] };
 	
 	//Canny edge detection
-    cv::Canny( image, image, lowerthreshold, 3 * lowerthreshold );
+    cv::Canny( houghlinesmat, houghlinesmat, lowerthreshold, 3 * lowerthreshold );
 
 //-----------------------------------------------------------------------------------------
 //Use Probalistic Hough Lines
-//-----------------------------------------------------------------------------------------	
+//-----------------------------------------------------------------------------------------
 	//Probalistic Houghlines
 	std::vector<cv::Vec4i> lines;
-	cv::HoughLinesP( image,
+	cv::HoughLinesP( houghlinesmat,
 					 lines,
-					 1,
-					 0.06981317007,					//Pi / 45
+					 lanedetectconstants::k_rho,
+					 lanedetectconstants::k_theta,
 					 lanedetectconstants::k_threshold,
 					 lanedetectconstants::k_minimumsize,
 					 lanedetectconstants::k_maxlinegap );
@@ -121,7 +152,7 @@ void ProcessImage ( cv::Mat& image,
 //-----------------------------------------------------------------------------------------	
 	std::vector<EvaluatedLine> leftlines;
 	std::vector<EvaluatedLine> rightlines;
-	SortLines( evaluatedlines, image.cols, leftlines, rightlines );
+	SortLines( evaluatedlines, houghlinesmat.cols, leftlines, rightlines );
 
 //-----------------------------------------------------------------------------------------
 //Find highest scoring pair of lines
@@ -139,7 +170,7 @@ void ProcessImage ( cv::Mat& image,
 			FindPolygon( newpolygon,
 						 leftevaluatedline,
 						 rightevaluatedline,
-						 image.rows );
+						 houghlinesmat.rows );
 				
 			//If invalid polygon created, goto next
 			if ( newpolygon == lanedetectconstants::defaultpolygon) continue;
@@ -148,7 +179,7 @@ void ProcessImage ( cv::Mat& image,
 			float score{ Score(newpolygon,
 						 leftevaluatedline,
 						 rightevaluatedline,
-						 image.cols) };
+						 houghlinesmat.cols) };
 			
 			//If highest score update
 			if ( score > maxscore ) {
@@ -162,7 +193,7 @@ void ProcessImage ( cv::Mat& image,
 
 	//Set bottom of polygon equal to optimal polygon
 	if ( bestpolygon != lanedetectconstants::defaultpolygon) {
-		FindPolygon( bestpolygon, leftline, rightline, image.rows, true );
+		FindPolygon( bestpolygon, leftline, rightline, houghlinesmat.rows, true );
 	}
 	
 //-----------------------------------------------------------------------------------------
@@ -327,7 +358,7 @@ void FindPolygon( Polygon& polygon,
 		int x{ static_cast<int>((bright - bleft) /
 								((1.0f / leftslopeinverse) -
 								 (1.0f / rightslopeinverse))) };
-		int y{ static_cast<int>((1.0f / leftslopeinverse) * x) + bleft };
+		int y{ static_cast<int>(((1.0f / leftslopeinverse) * x) + bleft) };
 		polygon[3] = polygon[2] = cv::Point(x, y);
 	}
 
@@ -346,9 +377,9 @@ float Score( const Polygon& polygon,
 	float centeroffset{ static_cast<float>(fabs((imagewidth -
 												(polygon[0].x + polygon[1].x)) *
 												0.5f)) };
-	float angleoffset{ 0.5f * fabs(180.0f -
-								   leftevaluatedline.angle -
-								   rightevaluatedline.angle) };
+	float angleoffset{ 0.5f * static_cast<float>(fabs(180.0f -
+													  leftevaluatedline.angle -
+													   rightevaluatedline.angle)) };
 	
 	return lanedetectconstants::k_weightedheightwidth * heightwidthratio +
 		   lanedetectconstants::k_weightedangleoffset * angleoffset +
