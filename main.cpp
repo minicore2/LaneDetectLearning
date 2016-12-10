@@ -85,12 +85,20 @@ int main(int argc,char *argv[])
 	double increment{0.5};
 	std::vector<LaneConstant> laneconstants;
 	//Sort by sequence in code!
+	//laneconstants.push_back( LaneConstant( "k_vanishingpointweight",
+	//	lanedetectconstants::k_vanishingpointweight, -10.0, -1.0, -0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_centeroffsetweight",
+	//	lanedetectconstants::k_centeroffsetweight,-10.0, -1.0, -0.05*increment) );
+	//laneconstants.push_back( LaneConstant( "k_lengthweight",
+	//	lanedetectconstants::k_lengthweight, 1.0, 10.0, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_lowestscorelimit",
+		lanedetectconstants::k_lowestscorelimit, -1000.0, 1000.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_contrastscalefactor",
 		lanedetectconstants::k_contrastscalefactor, 0.6, 1.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_theta",
 		lanedetectconstants::k_theta, 0.07, 0.21, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_vanishingpointy",
-	//	lanedetectconstants::k_vanishingpointy, 220.0, 280, 0.05*increment) );
+	laneconstants.push_back( LaneConstant( "k_vanishingpointy",
+		lanedetectconstants::k_vanishingpointy, 220.0, 280, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_ystartposition",
 		lanedetectconstants::k_ystartposition, 180, 260, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_maxvanishingpointangle",
@@ -105,12 +113,6 @@ int main(int argc,char *argv[])
 		lanedetectconstants::k_threshold, 20.0, 80.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_maxlinegap",
 		lanedetectconstants::k_maxlinegap, 2.0, 15.0, 0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_weightedangleoffset",
-	//	lanedetectconstants::k_weightedangleoffset, -10.0, -1.0, -0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_weightedcenteroffset",
-	//	lanedetectconstants::k_weightedcenteroffset,-10.0, -1.0, -0.05*increment) );
-	//laneconstants.push_back( LaneConstant( "k_weightedheightwidth",
-	//	lanedetectconstants::k_weightedheightwidth, 100.0, 400.0, 0.05*increment) );
 	laneconstants.push_back( LaneConstant( "k_lowestscorelimit",
 		lanedetectconstants::k_lowestscorelimit, -500.0, 500.0, 0.05*increment) );
 	std::cout << laneconstants.size() << " variables to modify" << std::endl;
@@ -216,8 +218,8 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 {
 	
 	for ( LaneConstant &l : laneconstants) {
-		if (l.variablename_ == "k_weightedheightwidth" ) {
-			lanedetectconstants::k_weightedheightwidth = l.value_;
+		if (l.variablename_ == "k_lengthweight" ) {
+			lanedetectconstants::k_lengthweight = l.value_;
 		} else if (l.variablename_ == "k_contrastscalefactor" ) {
 			lanedetectconstants::k_contrastscalefactor = l.value_;
 		} else if (l.variablename_ == "k_maxvanishingpointangle" ) {
@@ -232,10 +234,10 @@ void UpdateLaneConstants(std::vector<LaneConstant> &laneconstants)
 			lanedetectconstants::k_minroadwidth = l.value_;
 		} else if (l.variablename_ == "k_maxroadwidth" ) {
 			lanedetectconstants::k_maxroadwidth = l.value_;
-		} else if (l.variablename_ == "k_weightedcenteroffset" ) {
-			lanedetectconstants::k_weightedcenteroffset = l.value_;
-		} else if (l.variablename_ == "k_weightedangleoffset" ) {
-			lanedetectconstants::k_weightedangleoffset = l.value_;
+		} else if (l.variablename_ == "k_centeroffsetweight" ) {
+			lanedetectconstants::k_centeroffsetweight = l.value_;
+		} else if (l.variablename_ == "k_vanishingpointweight" ) {
+			lanedetectconstants::k_vanishingpointweight = l.value_;
 		} else if (l.variablename_ == "k_vanishingpointy" ) {
 			lanedetectconstants::k_vanishingpointy = l.value_;
 		} else if (l.variablename_ == "k_ystartposition" ) {
